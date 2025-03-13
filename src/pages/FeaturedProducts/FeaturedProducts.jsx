@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowUp, FaFlag } from "react-icons/fa";
-import axios from "axios";
 import useAuth from "../../hooks/useAuth";
 
 const FeaturedProducts = () => {
@@ -15,8 +14,11 @@ const FeaturedProducts = () => {
     try {
       const res = await fetch("http://localhost:5000/products");
       if (!res.ok) throw new Error("Failed to fetch");
+
       const data = await res.json();
-      setProducts(data);
+      console.log("Fetched products:", data); // ✅ Check in console
+
+      setProducts(data.products); // Adjust here if response has products key
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -24,6 +26,7 @@ const FeaturedProducts = () => {
     }
   }, []);
 
+  // ✅ UseEffect to call fetchProducts
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
@@ -69,7 +72,6 @@ const FeaturedProducts = () => {
     }
 
     try {
-      // Call upvoteProduct function
       const data = await upvoteProduct(productId);
 
       if (data?.success) {
