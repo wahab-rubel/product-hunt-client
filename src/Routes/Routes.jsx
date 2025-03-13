@@ -15,6 +15,7 @@ import Dashboard from '../layouts/Dashboard';
 import NotFound from '../pages/NotFound/NotFound';
 import AddProduct from '../pages/Dashboard/AddProduct/AddProduct';
 import MyProducts from '../pages/Dashboard/MyProducts/MyProducts';
+import UpdateProduct from '../pages/Dashboard/UpdateProduct/UpdateProduct'; 
 
 // ✅ Admin dashboard specific imports
 import Statistics from '../pages/Dashboard/Statistics/Statistics';
@@ -34,13 +35,14 @@ export const router = createBrowserRouter([
   },
   {
     path: 'dashboard',
-    element: <PrivateRoute><Dashboard /></PrivateRoute>, 
+    element: <PrivateRoute><Dashboard /></PrivateRoute>,
     children: [
       // User Routes
       { path: 'userHome', element: <UserHome /> },
       { path: 'profile', element: <Profile /> },
       { path: 'addproduct', element: <AddProduct /> },
       { path: 'myproducts', element: <MyProducts /> },
+      { path: 'updateproduct/:id', element: <PrivateRoute><UpdateProduct /></PrivateRoute> }, // ✅ Route added
 
       // Admin Routes
       { path: 'adminHome', element: <AdminRoute><AdminHome /></AdminRoute> },

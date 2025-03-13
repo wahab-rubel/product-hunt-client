@@ -3,41 +3,48 @@ import NavBar from "../../components/Navbar";
 import axios from "axios";
 
 const Products = () => {
-  const [products, setProducts] = useState([]);
-  const [query, setQuery] = useState(""); // User input value
-  const [search, setSearch] = useState(""); // Actual search trigger when clicking search button
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const productsPerPage = 6;
+  const [products, setProducts] = useState([]); // All fetched products
+  const [query, setQuery] = useState(""); // Search input value
+  const [search, setSearch] = useState(""); // Search trigger (button click)
+  const [currentPage, setCurrentPage] = useState(1); // Pagination current page
+  const [selectedProduct, setSelectedProduct] = useState(null); // Selected product for modal
+  const productsPerPage = 6; // Products per page
 
-  // ✅ Fetch products from backend using Axios
   useEffect(() => {
-    const url = `http://localhost:5000/products?search=${search}&page=${currentPage}&limit=${productsPerPage}`;
-    console.log("Requesting URL: ", url); // Debugging URL
-
-    axios
-      .get(url)
-      .then((res) => setProducts(res.data))
-      .catch((err) => console.error("Error fetching products: ", err)); // Error handling
-  }, [search, currentPage]); // Dependencies (search & page)
+    const fetchProducts = async () => {
+      const url = `http://localhost:5000/products?search=${search}&page=${currentPage}&limit=${productsPerPage}`;
+      console.log("Requesting URL: ", url); // Debug log
+  
+      try {
+        const response = await axios.get(url);
+        console.log("Fetched Products:", response.data); // Debug response
+        setProducts(response.data.products); // Adjusted based on expected response structure
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+  
+    fetchProducts(); // Call function
+  }, [search, currentPage]);
+  
 
   return (
     <>
       <NavBar />
       <div className="container mx-auto p-4 mt-16">
-        {/* ✅ Search Bar with Button */}
+        {/* ✅ Search Bar */}
         <div className="flex mb-4">
           <input
             type="text"
             placeholder="Search products..."
             className="border p-2 w-full rounded-l"
             value={query}
-            onChange={(e) => setQuery(e.target.value)} // Update input value
+            onChange={(e) => setQuery(e.target.value)} // Set input value
           />
           <button
             onClick={() => {
-              setSearch(query); // Trigger search when button is clicked
-              setCurrentPage(1); // Reset to page 1 when new search starts
+              setSearch(query); // Trigger search
+              setCurrentPage(1); // Reset page on new search
             }}
             className="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600"
           >
@@ -45,7 +52,7 @@ const Products = () => {
           </button>
         </div>
 
-        {/* ✅ Product Cards Grid */}
+        {/* ✅ Product Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {products.length > 0 ? (
             products.map((product) => (
@@ -59,7 +66,7 @@ const Products = () => {
                 <p className="text-gray-700">Price: ${product.price}</p>
                 <p className="text-gray-500">Category: {product.category}</p>
                 <button
-                  onClick={() => setSelectedProduct(product)}
+                  onClick={() => setSelectedProduct(product)} // Show modal
                   className="bg-blue-500 text-white px-4 py-2 mt-3 rounded hover:bg-blue-600"
                 >
                   View Details
@@ -71,7 +78,7 @@ const Products = () => {
           )}
         </div>
 
-        {/* ✅ Pagination Buttons */}
+        {/* ✅ Pagination */}
         <div className="flex justify-center mt-6 space-x-4">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -79,7 +86,7 @@ const Products = () => {
             className={`px-4 py-2 rounded ${
               currentPage === 1
                 ? "bg-gray-300 cursor-not-allowed"
-                : "bg-gray-500 text-white"
+                : "bg-gray-500 text-white hover:bg-gray-600"
             }`}
           >
             Previous
@@ -87,7 +94,7 @@ const Products = () => {
           <span className="flex items-center">{currentPage}</span>
           <button
             onClick={() => setCurrentPage((prev) => prev + 1)}
-            className="px-4 py-2 bg-gray-500 text-white rounded"
+            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
           >
             Next
           </button>
@@ -98,7 +105,7 @@ const Products = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg w-11/12 max-w-md relative shadow-lg">
               <button
-                onClick={() => setSelectedProduct(null)}
+                onClick={() => setSelectedProduct(null)} // Close modal
                 className="absolute top-2 right-2 text-red-500 text-xl"
               >
                 ✖

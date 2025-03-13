@@ -17,38 +17,47 @@ const UpdateProduct = () => {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
-  // Fetch existing product data on component mount
+  // ✅ Base URL for your backend
+  const BASE_URL = 'http://localhost:5000/products';
+
+  // ✅ Fetch existing product data on component mount
   useEffect(() => {
+    console.log('Product ID:', id); // Debugging purpose
+
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(`/api/products/${id}`);
+        const { data } = await axios.get(`${BASE_URL}/${id}`); // Corrected URL
+        console.log('Fetched Data:', data); // Debugging purpose
+
+        // Populate form fields with fetched data
         setProductName(data.productName);
         setDescription(data.description);
-        setTags(data.tags.map(tag => ({ id: tag, text: tag }))); // Convert tags to correct format
+        setTags(data.tags.map(tag => ({ id: tag, text: tag }))); // Convert tags to format required by ReactTags
         setExternalLink(data.externalLink || '');
         setImagePreview(data.imageUrl); // Preview existing image
       } catch (error) {
         console.error('Error fetching product:', error);
-        alert('Failed to fetch product data.');
+        alert('Failed to fetch product data. Please check if product ID is correct.');
       }
     };
+
     fetchProduct();
   }, [id]);
 
-  // Handle new image selection
+  // ✅ Handle new image selection
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
-    setImagePreview(URL.createObjectURL(file));
+    setImagePreview(URL.createObjectURL(file)); // Set image preview
   };
 
-  // Handle tag addition
+  // ✅ Handle tag addition
   const handleAddition = (tag) => setTags([...tags, tag]);
 
-  // Handle tag deletion
+  // ✅ Handle tag deletion
   const handleDelete = (i) => setTags(tags.filter((_, index) => index !== i));
 
-  // Handle form submission
+  // ✅ Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -57,26 +66,26 @@ const UpdateProduct = () => {
     formData.append('description', description);
     formData.append('ownerName', user.name);
     formData.append('ownerEmail', user.email);
-    formData.append('tags', JSON.stringify(tags.map(tag => tag.text)));
+    formData.append('tags', JSON.stringify(tags.map(tag => tag.text))); // Send only tag texts
     formData.append('externalLink', externalLink);
-    if (image) formData.append('image', image); // Append image only if a new one is selected
+    if (image) formData.append('image', image); // Append image only if new one selected
 
     try {
-      const response = await axios.patch(`/api/products/${id}`, formData, {
+      const response = await axios.patch(`${BASE_URL}/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
       if (response.status === 200) {
-        alert('Product updated successfully!');
+        alert('✅ Product updated successfully!');
         navigate('/dashboard/myproducts');
       } else {
-        alert('Failed to update product.');
+        alert('❌ Failed to update product. Please try again.');
       }
     } catch (error) {
       console.error('Error updating product:', error);
-      alert('Failed to update product. See console for error.');
+      alert('❌ Failed to update product. See console for details.');
     }
   };
 

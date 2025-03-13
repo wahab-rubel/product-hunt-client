@@ -1,14 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Modal = ({ onClose, onPaymentSuccess }) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
+  useEffect(() => {
+    const fetchSubscriptionStatus = async () => {
+      try {
+        console.log("Backend URL:", import.meta.env.VITE_BACKEND_URL);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/subscription-status`);
+        console.log("Subscription Status on Modal Open:", response.data);
+      } catch (error) {
+        console.error("Error fetching subscription status:", error);
+      }
+    };
+
+    fetchSubscriptionStatus();
+  }, []);
+
   const handlePayment = () => {
     setIsProcessing(true);
-    // Simulate the payment process
     setTimeout(() => {
       setIsProcessing(false);
-      onPaymentSuccess(); // Notify success after payment
+      onPaymentSuccess(); // Payment successful
     }, 2000);
   };
 
@@ -16,7 +30,6 @@ const Modal = ({ onClose, onPaymentSuccess }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <h2>Payment Checkout</h2>
-        {/* Add your payment form or logic here */}
         <button 
           onClick={handlePayment} 
           disabled={isProcessing}

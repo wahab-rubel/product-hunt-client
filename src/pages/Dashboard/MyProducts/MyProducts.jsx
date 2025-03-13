@@ -12,11 +12,13 @@ const MyProducts = () => {
     if (user?.email) {
       fetch(`http://localhost:5000/products?userEmail=${user.email}`)
         .then((res) => res.json())
-        .then((data) => setProducts(data))
+        .then((data) => {
+          console.log("Fetched Products:", data); // Check API data
+          setProducts(data.products); // ✅ Set only the products array
+        })
         .catch((err) => console.error("Failed to load products", err));
     }
   }, [user]);
-  
 
   // ✅ Handle Delete Product
   const handleDelete = (id) => {
@@ -79,6 +81,7 @@ const MyProducts = () => {
                     >
                       Update
                     </Link>
+
                     {/* ✅ Delete Button */}
                     <button
                       onClick={() => handleDelete(product._id)}
