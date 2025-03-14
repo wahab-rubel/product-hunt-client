@@ -10,6 +10,7 @@ import {
   FaUser,
   FaCartPlus,
   FaListAlt,
+  FaCheckCircle,
 } from "react-icons/fa";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import useCart from "../hooks/useCart";
@@ -25,13 +26,31 @@ const Dashboard = () => {
       {/* Navbar */}
       <header className="bg-white/30 backdrop-blur-lg shadow-md border-b border-gray-200 p-6 sticky top-0 z-50">
         <nav className="flex justify-between items-center">
-          <Link to="/" className="text-3xl font-extrabold text-purple-700 tracking-widest">
+          <Link
+            to="/"
+            className="text-3xl font-extrabold text-purple-700 tracking-widest"
+          >
             Product<span className="text-yellow-500">Hunt</span>
           </Link>
           <div className="space-x-6 text-lg">
-            <NavLink to="/" className="hover:text-yellow-500 transition text-xl font-extrabold text-cyan-500">Home</NavLink>
-            <NavLink to="/products" className="hover:text-yellow-500 transition text-xl font-extrabold text-cyan-500">Products</NavLink>
-            <NavLink to="/contact" className="hover:text-yellow-500 transition text-xl font-extrabold text-cyan-500">Contact</NavLink>
+            <NavLink
+              to="/"
+              className="hover:text-yellow-500 transition text-xl font-extrabold text-cyan-500"
+            >
+              Home
+            </NavLink>
+            <NavLink
+              to="/products"
+              className="hover:text-yellow-500 transition text-xl font-extrabold text-cyan-500"
+            >
+              Products
+            </NavLink>
+            <NavLink
+              to="/contact"
+              className="hover:text-yellow-500 transition text-xl font-extrabold text-cyan-500"
+            >
+              Contact
+            </NavLink>
           </div>
         </nav>
       </header>
@@ -40,32 +59,83 @@ const Dashboard = () => {
         {/* Sidebar */}
         <aside className="w-72 bg-gradient-to-b from-purple-800 to-purple-600 text-white p-6 shadow-xl backdrop-blur-lg rounded-tr-3xl rounded-br-3xl flex flex-col gap-4 overflow-y-auto custom-scrollbar">
           {isAdminLoading ? (
-            <div className="text-center mt-10 text-lg font-semibold">Loading Menu...</div>
+            <div className="text-center mt-10 text-lg font-semibold">
+              Loading Menu...
+            </div>
           ) : (
             <ul className="space-y-4 text-lg">
               {isAdmin ? (
                 <>
-                  <SidebarItem to="/dashboard/adminHome" icon={<FaHome />} label="Admin Home" />
-                  <SidebarItem to="/dashboard/addproduct" icon={<FaUtensils />} label="Add Product" />
-                  <SidebarItem to="/dashboard/myproducts" icon={<FaList />} label="Manage Products" />
-                  <SidebarItem to="/dashboard/statistics" icon={<FaBook />} label="Statistics" />
-                  <SidebarItem to="/dashboard/manage-users" icon={<FaUsers />} label="Manage Users" />
-                  <SidebarItem to="/dashboard/manage-coupons" icon={<FaAd />} label="Manage Coupons" />
+                  <SidebarItem
+                    to="/dashboard/adminHome"
+                    icon={<FaHome />}
+                    label="Admin Home"
+                  />
+                  <SidebarItem
+                    to="/dashboard/addproduct"
+                    icon={<FaUtensils />}
+                    label="Add Product"
+                  />
+                  <SidebarItem
+                    to="/dashboard/myproducts"
+                    icon={<FaList />}
+                    label="Manage Products"
+                  />
+                  <SidebarItem
+                    to="/dashboard/statistics"
+                    icon={<FaBook />}
+                    label="Statistics"
+                  />
+                  <SidebarItem
+                    to="/dashboard/manage-users"
+                    icon={<FaUsers />}
+                    label="Manage Users"
+                  />
+                  <SidebarItem
+                    to="/dashboard/manage-coupons"
+                    icon={<FaAd />}
+                    label="Manage Coupons"
+                  />
                 </>
               ) : (
                 <>
-                  <SidebarItem to="/dashboard/userHome" icon={<FaHome />} label="User Home" />
-                  <SidebarItem to="/dashboard/profile" icon={<FaUser />} label="Profile" />
-                  <SidebarItem to="/dashboard/addproduct" icon={<FaCartPlus />} label="Add Product" />
-                  <SidebarItem to="/dashboard/myproducts" icon={<FaListAlt />} label="My Products" />
+                  <SidebarItem
+                    to="/dashboard/userHome"
+                    icon={<FaHome />}
+                    label="User Home"
+                  />
+                  <SidebarItem
+                    to="/dashboard/profile"
+                    icon={<FaUser />}
+                    label="Profile"
+                  />
+                  <SidebarItem
+                    to="/dashboard/addproduct"
+                    icon={<FaCartPlus />}
+                    label="Add Product"
+                  />
+                  <SidebarItem
+                    to="/dashboard/myproducts"
+                    icon={<FaListAlt />}
+                    label="My Products"
+                  />
                 </>
               )}
 
+              {/* Divider */}
               <div className="border-t border-gray-400 my-4"></div>
 
+              {/* Common Links for All */}
               <SidebarItem to="/" icon={<FaHome />} label="Home" />
               <SidebarItem to="/products" icon={<FaSearch />} label="Products" />
               <SidebarItem to="/contact" icon={<FaEnvelope />} label="Contact" />
+
+              {/* ✅ Product Review Queue for Both Admin & User */}
+              <SidebarItem
+                to="/dashboard/product-review"
+                icon={<FaCheckCircle />}
+                label="Product Review Queue"
+              />
             </ul>
           )}
         </aside>
@@ -84,7 +154,7 @@ const Dashboard = () => {
   );
 };
 
-// ✅ Reusable Sidebar Item with Better Style
+// ✅ Reusable Sidebar Item Component
 const SidebarItem = ({ to, icon, label }) => (
   <NavLink
     to={to}

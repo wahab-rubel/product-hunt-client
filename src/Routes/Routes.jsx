@@ -29,6 +29,7 @@ import AllUsers from '../pages/Dashboard/AllUsers/AllUsers';
 import Statistics from '../pages/Dashboard/Statistics/Statistics';
 import ManageUsers from '../pages/Dashboard/ManageUsers/ManageUsers';
 import ManageCoupons from '../pages/Dashboard/ManageCoupons/ManageCoupons';
+import ProductReviewQueue from '../components/ProductReviewQueue/ProductReviewQueue';
 
 export const router = createBrowserRouter([
   // 🌐 Public Routes
@@ -36,24 +37,24 @@ export const router = createBrowserRouter([
     path: '/',
     element: <Main />,
     children: [
-      { index: true, element: <Home /> }, // Home route
-      { path: 'products', element: <Products /> }, // Products route
-      { path: 'login', element: <Login /> }, // Login route
-      { path: 'signup', element: <SignUp /> }, // Signup route
+      { index: true, element: <Home /> },
+      { path: 'products', element: <Products /> },
+      { path: 'login', element: <Login /> },
+      { path: 'signup', element: <SignUp /> },
     ],
   },
 
   // 🔐 Private Dashboard Routes
   {
     path: 'dashboard',
-    element: <PrivateRoute><Dashboard /></PrivateRoute>, // Protect entire dashboard
+    element: <PrivateRoute><Dashboard /></PrivateRoute>,
     children: [
       // ✅ User Dashboard Routes
       { path: 'userHome', element: <UserHome /> },
       { path: 'profile', element: <Profile /> },
       { path: 'addproduct', element: <AddProduct /> },
       { path: 'myproducts', element: <MyProducts /> },
-      { path: 'updateproduct/:id', element: <PrivateRoute><UpdateProduct /></PrivateRoute> }, // Extra security
+      { path: 'updateproduct/:id', element: <PrivateRoute><UpdateProduct /></PrivateRoute> },
 
       // ✅ Admin Dashboard Routes
       { path: 'adminHome', element: <AdminRoute><AdminHome /></AdminRoute> },
@@ -64,6 +65,9 @@ export const router = createBrowserRouter([
       { path: 'statistics', element: <AdminRoute><Statistics /></AdminRoute> },
       { path: 'manage-users', element: <AdminRoute><ManageUsers /></AdminRoute> },
       { path: 'manage-coupons', element: <AdminRoute><ManageCoupons /></AdminRoute> },
+
+      // ✅ 🎯 Product Review Queue Route
+      { path: 'product-review', element: <AdminRoute><ProductReviewQueue /></AdminRoute> },
     ],
   },
 
