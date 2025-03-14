@@ -9,34 +9,31 @@ const Navbar = () => {
   const [isAdmin, isAdminLoading] = useAdmin();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const dropdownRef = useRef();
 
-  // ✅ Google Login Handler
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await googleSignIn();
-      console.log("User logged in:", result);
-      navigate("/");
-    } catch (error) {
-      console.error("Google Login Error:", error);
+  // ✅ Handle search submission
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim() !== "") {
+      navigate(`/products?search=${searchQuery.trim()}`);
+      setSearchQuery(""); // Optional: Clear search after navigating
     }
   };
 
-  // ✅ Logout Handler
-  const handleLogout = async () => {
-    try {
-      await logOut();
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
-
-  // ✅ Close dropdown on outside click
+  // ✅ Scroll effect for navbar background
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // ✅ Outside click to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
       }
     };
@@ -44,146 +41,125 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // ✅ Login & Logout handlers
+  const handleGoogleLogin = async () => {
+    try {
+      await googleSignIn();
+      navigate("/");
+    } catch (error) {
+      console.error("Login Error:", error);
+    }
+  };
+  const handleLogout = async () => {
+    try {
+      await logOut();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
+  };
+
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 shadow-md border-b border-gray-200 bg-purple-700">
-      <div className="flex items-center justify-between px-6 py-4">
-        {/* ✅ Logo & Mobile Button */}
-        <div className="flex items-center">
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden text-white mr-3"
-          >
-            {mobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-          </button>
-          <Link to="/" className="text-2xl font-extrabold text-orange-500">
-            Product-Hunt
-          </Link>
-        </div>
+    <nav
+      className={`fixed top-0 left-0 w-full z-50 transition-all ${
+        scrolled ? "backdrop-blur-md bg-purple-800/70 shadow-lg" : "bg-transparent"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+        {/* Logo */}
+        <Link to="/" className="text-3xl font-bold text-orange-400">
+          ProductHunt
+        </Link>
 
-        {/* ✅ Search Bar (Desktop only) */}
-        <div className="hidden lg:flex items-center relative">
-          <input
-            type="text"
-            placeholder="Search Here!"
-            className="bg-gray-100 pl-8 pr-4 py-2 rounded-full text-gray-600 w-64 focus:outline-none"
-          />
-          <FaSearch className="absolute left-3 top-3 text-gray-500" />
-        </div>
-
-        {/* ✅ Desktop Menu */}
-        <div className="hidden lg:flex items-center space-x-6 text-white text-lg">
-          <NavLink to="/" className="hover:text-red-400">
-            Home
-          </NavLink>
-          <NavLink to="/products" className="hover:text-red-400">
-            Products
-          </NavLink>
-          {user && (
-            <NavLink to="/dashboard" className="hover:text-red-400">
-              Dashboard
-            </NavLink>
-          )}
+        {/* Desktop Menu */}
+        <div className="hidden lg:flex items-center space-x-8">
+          <NavLink to="/" className="text-white hover:text-orange-400">Home</NavLink>
+          <NavLink to="/products" className="text-white hover:text-orange-400">Products</NavLink>
+          {user && <NavLink to="/dashboard" className="text-white hover:text-orange-400">Dashboard</NavLink>}
           {isAdmin && !isAdminLoading && (
-            <NavLink to="/admin/manage-users" className="hover:text-red-400">
+            <NavLink to="/admin/manage-users" className="text-white hover:text-orange-400">
               Admin Panel
             </NavLink>
           )}
         </div>
 
-        {/* ✅ User Dropdown/Profile */}
-        <div className="relative" ref={dropdownRef}>
-          {user ? (
-            <button onClick={() => setDropdownOpen(!dropdownOpen)}>
-              <img
-                src={user.photoURL || "https://i.ibb.co/MBtjqXQ/no-avatar.gif"}
-                alt="User"
-                className="h-10 w-10 rounded-full border-2 border-white"
-              />
-            </button>
-          ) : (
-            <button
-              onClick={handleGoogleLogin}
-              className="bg-orange-500 px-4 py-2 rounded-full text-white hover:bg-orange-600"
-            >
-              Login
-            </button>
-          )}
+        {/* ✅ Search Input */}
+        <form onSubmit={handleSearchSubmit} className="hidden lg:block relative">
+          <input
+            type="text"
+            placeholder="Search here..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-white/20 placeholder-gray-300 pl-10 pr-4 py-2 rounded-full text-white focus:outline-none focus:ring focus:ring-orange-400"
+          />
+          <FaSearch className="absolute left-3 top-3 text-white opacity-70" />
+        </form>
 
-          {/* ✅ Dropdown Menu */}
-          {dropdownOpen && user && (
-            <div className="absolute right-0 bg-white shadow-lg rounded w-48 mt-2 z-20">
-              <p className="px-4 py-2 border-b text-gray-700">
-                {user.displayName || "User"}
-              </p>
-              <NavLink
-                to="/dashboard"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                Dashboard
-              </NavLink>
-              {isAdmin && !isAdminLoading && (
-                <NavLink
-                  to="/admin/manage-users"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                >
-                  Admin Panel
-                </NavLink>
-              )}
+        {/* Avatar & Mobile Menu Button */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden text-white"
+          >
+            {mobileMenuOpen ? <FaTimes size={26} /> : <FaBars size={26} />}
+          </button>
+
+          {/* User Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            {user ? (
               <button
-                onClick={handleLogout}
-                className="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="border-2 border-white rounded-full p-1"
               >
-                Logout
+                <img
+                  src={user.photoURL || "https://i.ibb.co/MBtjqXQ/no-avatar.gif"}
+                  alt="User"
+                  className="h-10 w-10 rounded-full object-cover shadow-md"
+                />
               </button>
-            </div>
-          )}
+            ) : (
+              <button
+                onClick={handleGoogleLogin}
+                className="bg-orange-500 px-4 py-2 rounded-full text-white hover:bg-orange-600"
+              >
+                Login
+              </button>
+            )}
+
+            {/* Dropdown Menu */}
+            {dropdownOpen && user && (
+              <div className="absolute right-0 mt-2 w-52 bg-white shadow-xl rounded-lg overflow-hidden z-30 animate-slideIn">
+                <p className="px-4 py-2 text-gray-700 border-b">{user.displayName || "User"}</p>
+                <NavLink to="/dashboard" className="block px-4 py-2 hover:bg-gray-100">Dashboard</NavLink>
+                {isAdmin && !isAdminLoading && (
+                  <NavLink to="/admin/manage-users" className="block px-4 py-2 hover:bg-gray-100">Admin Panel</NavLink>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* ✅ Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white text-black shadow-md">
-          <div className="flex flex-col space-y-4 p-4">
-            <NavLink
-              to="/"
-              className="hover:text-red-500"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Home
-            </NavLink>
-            <NavLink
-              to="/products"
-              className="hover:text-red-500"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Products
-            </NavLink>
+        <div className="lg:hidden bg-white/90 backdrop-blur-md text-black py-4">
+          <div className="flex flex-col space-y-4 px-6">
+            <NavLink to="/" onClick={() => setMobileMenuOpen(false)} className="hover:text-orange-500">Home</NavLink>
+            <NavLink to="/products" onClick={() => setMobileMenuOpen(false)} className="hover:text-orange-500">Products</NavLink>
             {user && (
               <>
-                <NavLink
-                  to="/dashboard"
-                  className="hover:text-red-500"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Dashboard
-                </NavLink>
-                <NavLink
-                  to="/dashboard/mycart"
-                  className="hover:text-red-500"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  My Cart
-                </NavLink>
+                <NavLink to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="hover:text-orange-500">Dashboard</NavLink>
+                <NavLink to="/dashboard/mycart" onClick={() => setMobileMenuOpen(false)} className="hover:text-orange-500">My Cart</NavLink>
               </>
             )}
             {isAdmin && !isAdminLoading && (
-              <NavLink
-                to="/admin/manage-users"
-                className="hover:text-red-500"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Admin Panel
-              </NavLink>
+              <NavLink to="/admin/manage-users" onClick={() => setMobileMenuOpen(false)} className="hover:text-orange-500">Admin Panel</NavLink>
             )}
             {user ? (
               <button
@@ -191,7 +167,7 @@ const Navbar = () => {
                   handleLogout();
                   setMobileMenuOpen(false);
                 }}
-                className="text-red-500 hover:underline text-left"
+                className="text-red-500 text-left"
               >
                 Logout
               </button>

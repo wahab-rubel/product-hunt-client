@@ -1,61 +1,83 @@
+import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from "react-icons/fa";
+
 const Footer = () => {
- return (
-   <footer className="bg-gray-900 text-white py-10">
-     <div className="container mx-auto px-6 lg:px-20">
-       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-         {/* Logo + Description */}
-         <div>
-           <h2 className="text-2xl font-bold">YourBrand</h2>
-           <p className="text-gray-400 mt-2">
-             Discover, share, and grow with the best products in the world.
-           </p>
-         </div>
+  return (
+    <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-12">
+      <div className="container mx-auto px-6 md:px-16">
+        {/* Grid Section */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 
-         {/* Navigation Links */}
-         <div className="flex justify-between">
-           <div>
-             <h3 className="text-lg font-semibold mb-3">Company</h3>
-             <ul className="space-y-2">
-               <li><a href="#" className="hover:text-gray-300">About</a></li>
-               <li><a href="#" className="hover:text-gray-300">Blog</a></li>
-               <li><a href="#" className="hover:text-gray-300">Careers</a></li>
-               <li><a href="#" className="hover:text-gray-300">Contact</a></li>
-             </ul>
-           </div>
-           <div>
-             <h3 className="text-lg font-semibold mb-3">Support</h3>
-             <ul className="space-y-2">
-               <li><a href="#" className="hover:text-gray-300">Help Center</a></li>
-               <li><a href="#" className="hover:text-gray-300">Privacy Policy</a></li>
-               <li><a href="#" className="hover:text-gray-300">Terms of Service</a></li>
-             </ul>
-           </div>
-         </div>
+          {/* Brand Section */}
+          <div>
+            <h2 className="text-3xl font-extrabold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+              ProductHunt
+            </h2>
+            <p className="text-gray-400 mt-3 leading-relaxed">
+              Discover, share, and grow with trending products. We bring the future to your fingertips.
+            </p>
+          </div>
 
-         {/* Social Links */}
-         <div>
-           <h3 className="text-lg font-semibold mb-3">Follow Us</h3>
-           <div className="flex space-x-4">
-             <a href="#" className="hover:text-gray-300">
-               <i className="fab fa-twitter text-2xl"></i>
-             </a>
-             <a href="#" className="hover:text-gray-300">
-               <i className="fab fa-facebook text-2xl"></i>
-             </a>
-             <a href="#" className="hover:text-gray-300">
-               <i className="fab fa-linkedin text-2xl"></i>
-             </a>
-           </div>
-         </div>
-       </div>
+          {/* Company Links */}
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Company</h3>
+            <ul className="space-y-3">
+              <li><a href="#" className="hover:text-purple-400 transition-colors">About Us</a></li>
+              <li><a href="#" className="hover:text-purple-400 transition-colors">Careers</a></li>
+              <li><a href="#" className="hover:text-purple-400 transition-colors">Blog</a></li>
+              <li><a href="#" className="hover:text-purple-400 transition-colors">Contact</a></li>
+            </ul>
+          </div>
 
-       {/* Copyright Section */}
-       <div className="mt-8 border-t border-gray-700 pt-5 text-center text-gray-500 text-sm">
-         &copy; {new Date().getFullYear()} YourBrand. All rights reserved.
-       </div>
-     </div>
-   </footer>
- );
+          {/* Support Links */}
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Support</h3>
+            <ul className="space-y-3">
+              <li><a href="#" className="hover:text-purple-400 transition-colors">Help Center</a></li>
+              <li><a href="#" className="hover:text-purple-400 transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-purple-400 transition-colors">Terms of Service</a></li>
+              <li><a href="#" className="hover:text-purple-400 transition-colors">FAQs</a></li>
+            </ul>
+          </div>
+
+          {/* Newsletter & Social */}
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Stay Updated</h3>
+            <p className="text-gray-400 mb-4">Subscribe to our newsletter for the latest updates.</p>
+            <div className="flex items-center space-x-2">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="p-2 rounded-lg w-full bg-gray-700 text-white focus:outline-none focus:ring focus:ring-purple-500"
+              />
+              <button className="bg-purple-600 hover:bg-purple-700 transition-colors p-2 rounded-lg">
+                Subscribe
+              </button>
+            </div>
+            <div className="flex space-x-4 mt-6">
+              <a href="#" className="p-2 bg-gray-700 hover:bg-purple-600 rounded-full transition-colors">
+                <FaFacebookF />
+              </a>
+              <a href="#" className="p-2 bg-gray-700 hover:bg-purple-600 rounded-full transition-colors">
+                <FaTwitter />
+              </a>
+              <a href="#" className="p-2 bg-gray-700 hover:bg-purple-600 rounded-full transition-colors">
+                <FaLinkedinIn />
+              </a>
+              <a href="#" className="p-2 bg-gray-700 hover:bg-purple-600 rounded-full transition-colors">
+                <FaInstagram />
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Copyright */}
+        <div className="mt-10 border-t border-gray-700 pt-6 text-center text-gray-400">
+          &copy; {new Date().getFullYear()} ProductHunt. All Rights Reserved.
+        </div>
+      </div>
+    </footer>
+  );
 };
 
 export default Footer;

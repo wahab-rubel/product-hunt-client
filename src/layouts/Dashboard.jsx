@@ -21,187 +21,60 @@ const Dashboard = () => {
   const [isAdmin, isAdminLoading] = useAdmin();
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       {/* Navbar */}
-      <header className="bg-purple-800 text-white p-6">
+      <header className="bg-white/30 backdrop-blur-lg shadow-md border-b border-gray-200 p-6 sticky top-0 z-50">
         <nav className="flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-red-500">
-            Product-Hunt
+          <Link to="/" className="text-3xl font-extrabold text-purple-700 tracking-widest">
+            Product<span className="text-yellow-500">Hunt</span>
           </Link>
-          <div className="space-x-4">
-            <NavLink to="/" className="hover:text-gray-300">
-              Home
-            </NavLink>
-            <NavLink to="/order/salad" className="hover:text-gray-300">
-              Menu
-            </NavLink>
-            <NavLink to="/order/contact" className="hover:text-gray-300">
-              Contact
-            </NavLink>
+          <div className="space-x-6 text-lg">
+            <NavLink to="/" className="hover:text-yellow-500 transition">Home</NavLink>
+            <NavLink to="/products" className="hover:text-yellow-500 transition">Products</NavLink>
+            <NavLink to="/contact" className="hover:text-yellow-500 transition">Contact</NavLink>
           </div>
         </nav>
       </header>
 
-      <div className="flex flex-1">
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-72 min-h-screen bg-purple-800 text-white p-6">
+        <aside className="w-72 bg-gradient-to-b from-purple-800 to-purple-600 text-white p-6 shadow-xl backdrop-blur-lg rounded-tr-3xl rounded-br-3xl flex flex-col gap-4 overflow-y-auto custom-scrollbar">
           {isAdminLoading ? (
-            <div className="text-center mt-10">
-              <p className="text-lg font-semibold">Loading Menu...</p>
-            </div>
+            <div className="text-center mt-10 text-lg font-semibold">Loading Menu...</div>
           ) : (
-            <ul className="space-y-4">
+            <ul className="space-y-4 text-lg">
               {isAdmin ? (
-                // ✅ Admin Menu
                 <>
-                  <li>
-                    <NavLink
-                      to="/dashboard/adminHome"
-                      className={({ isActive }) =>
-                        `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                      }
-                    >
-                      <FaHome className="text-2xl" /> <span>Admin Home</span>
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/dashboard/addproduct"
-                      className={({ isActive }) =>
-                        `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                      }
-                    >
-                      <FaUtensils className="text-2xl" /> <span>Add Product</span>
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/dashboard/myproducts"
-                      className={({ isActive }) =>
-                        `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                      }
-                    >
-                      <FaList className="text-2xl" /> <span>Manage My Products</span>
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/dashboard/statistics"
-                      className={({ isActive }) =>
-                        `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                      }
-                    >
-                      <FaBook className="text-2xl" /> <span>Statistics</span>
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/dashboard/manage-users"
-                      className={({ isActive }) =>
-                        `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                      }
-                    >
-                      <FaUsers className="text-2xl" /> <span>Manage Users</span>
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/dashboard/manage-coupons"
-                      className={({ isActive }) =>
-                        `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                      }
-                    >
-                      <FaAd className="text-2xl" /> <span>Manage Coupons</span>
-                    </NavLink>
-                  </li>
+                  <SidebarItem to="/dashboard/adminHome" icon={<FaHome />} label="Admin Home" />
+                  <SidebarItem to="/dashboard/addproduct" icon={<FaUtensils />} label="Add Product" />
+                  <SidebarItem to="/dashboard/myproducts" icon={<FaList />} label="Manage Products" />
+                  <SidebarItem to="/dashboard/statistics" icon={<FaBook />} label="Statistics" />
+                  <SidebarItem to="/dashboard/manage-users" icon={<FaUsers />} label="Manage Users" />
+                  <SidebarItem to="/dashboard/manage-coupons" icon={<FaAd />} label="Manage Coupons" />
                 </>
               ) : (
-                // ✅ User Menu
                 <>
-                  <li>
-                    <NavLink
-                      to="/dashboard/userHome"
-                      className={({ isActive }) =>
-                        `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                      }
-                    >
-                      <FaHome className="text-2xl" /> <span>User Home</span>
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/dashboard/profile"
-                      className={({ isActive }) =>
-                        `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                      }
-                    >
-                      <FaUser className="text-2xl" /> <span>Profile</span>
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/dashboard/addproduct"
-                      className={({ isActive }) =>
-                        `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                      }
-                    >
-                      <FaCartPlus className="text-2xl" /> <span>Add Product</span>
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/dashboard/myproducts"
-                      className={({ isActive }) =>
-                        `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                      }
-                    >
-                      <FaListAlt className="text-2xl" /> <span>My Products</span>
-                    </NavLink>
-                  </li>
+                  <SidebarItem to="/dashboard/userHome" icon={<FaHome />} label="User Home" />
+                  <SidebarItem to="/dashboard/profile" icon={<FaUser />} label="Profile" />
+                  <SidebarItem to="/dashboard/addproduct" icon={<FaCartPlus />} label="Add Product" />
+                  <SidebarItem to="/dashboard/myproducts" icon={<FaListAlt />} label="My Products" />
                 </>
               )}
 
-              {/* Divider */}
               <div className="border-t border-gray-400 my-4"></div>
 
-              {/* ✅ Common Menu */}
-              <li>
-                <NavLink
-                  to="/"
-                  className={({ isActive }) =>
-                    `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                  }
-                >
-                  <FaHome className="text-2xl" /> <span>Home</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/products"
-                  className={({ isActive }) =>
-                    `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                  }
-                >
-                  <FaSearch className="text-2xl" /> <span>Products</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/order/contact"
-                  className={({ isActive }) =>
-                    `flex items-center space-x-3 ${isActive ? "text-yellow-300" : ""}`
-                  }
-                >
-                  <FaEnvelope className="text-2xl" /> <span>Contact</span>
-                </NavLink>
-              </li>
+              <SidebarItem to="/" icon={<FaHome />} label="Home" />
+              <SidebarItem to="/products" icon={<FaSearch />} label="Products" />
+              <SidebarItem to="/contact" icon={<FaEnvelope />} label="Contact" />
             </ul>
           )}
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6 bg-gray-100">
-          <Outlet />
+        <main className="flex-1 p-8 overflow-y-auto">
+          <div className="bg-white shadow-lg rounded-xl p-8 min-h-[80vh]">
+            <Outlet />
+          </div>
         </main>
       </div>
 
@@ -210,5 +83,22 @@ const Dashboard = () => {
     </div>
   );
 };
+
+// ✅ Reusable Sidebar Item with Better Style
+const SidebarItem = ({ to, icon, label }) => (
+  <NavLink
+    to={to}
+    className={({ isActive }) =>
+      `flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${
+        isActive
+          ? "bg-yellow-300 text-black shadow-md"
+          : "hover:bg-white/20 hover:shadow hover:translate-x-1"
+      }`
+    }
+  >
+    <span className="text-2xl">{icon}</span>
+    <span className="font-medium">{label}</span>
+  </NavLink>
+);
 
 export default Dashboard;
