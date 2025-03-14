@@ -8,79 +8,91 @@ const Products = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Extract search query from URL
+  // ✅ Extract search query from URL
   const searchParams = new URLSearchParams(location.search);
   const urlSearchQuery = searchParams.get("search")?.toLowerCase() || "";
 
-  const [products, setProducts] = useState([]); // All fetched products
-  const [query, setQuery] = useState(urlSearchQuery); // Search input value (linked to input field)
-  const [search, setSearch] = useState(urlSearchQuery); // Actual search trigger
-  const [currentPage, setCurrentPage] = useState(1); // Pagination
-  const [selectedProduct, setSelectedProduct] = useState(null); // Modal
-  const productsPerPage = 6; // Number of products per page
+  // ✅ State Variables
+  const [products, setProducts] = useState([]);
+  const [query, setQuery] = useState(urlSearchQuery);
+  const [search, setSearch] = useState(urlSearchQuery);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const productsPerPage = 6;
 
-  // Fetch products when 'search' or 'currentPage' changes
+  // ✅ Fetch products on search or pagination change
   useEffect(() => {
     const fetchProducts = async () => {
-      const url = `http://localhost:5000/products?search=${search}&page=${currentPage}&limit=${productsPerPage}`;
-      console.log("Fetching URL:", url); // Debugging
-
       try {
+        const url = `http://localhost:5000/products?search=${search}&page=${currentPage}&limit=${productsPerPage}`;
+        console.log("Fetching URL:", url); // Debug purpose
+
         const response = await axios.get(url);
-        console.log("Products fetched:", response.data);
-        setProducts(response.data.products); // Adjust according to API response
+        console.log("Fetched Products:", response.data); // Debug purpose
+
+        setProducts(response.data.products || []);
+        setTotalPages(response.data.totalPages || 1);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Failed to fetch products:", error);
       }
     };
 
     fetchProducts();
   }, [search, currentPage]);
 
-  // Handle Search Form Submit
+  // ✅ Handle search submission
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (query.trim() !== "") {
-      setSearch(query.trim()); // Set search query to trigger fetch
-      setCurrentPage(1); // Reset to first page on new search
-      navigate(`/products?search=${query.trim()}`); // Sync URL
+    const trimmedQuery = query.trim();
+    if (trimmedQuery !== "") {
+      setSearch(trimmedQuery);
+      setCurrentPage(1);
+      navigate(`/products?search=${trimmedQuery}`);
     }
   };
+
+  // ✅ Pagination Controls
+  const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
   return (
     <>
       <NavBar />
 
-      <div className="container mx-auto p-4 mt-16">
-        {/* ✅ Search Bar with Icon Button inside input */}
+      <div className="container mx-auto p-4 mt-20">
+        {/* ✅ Search Bar */}
         <form
           onSubmit={handleSearchSubmit}
-          className="hidden lg:block relative mb-6"
+          className="relative mb-6 w-full max-w-xl mx-auto"
         >
           <input
             type="text"
             placeholder="Search products..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="bg-white/20 placeholder-gray-300 pl-10 pr-10 py-2 rounded-full text-white w-full focus:outline-none focus:ring focus:ring-orange-400"
+            className="bg-white/20 placeholder-gray-300 pl-10 pr-10 py-3 rounded-full text-white w-full focus:outline-none focus:ring focus:ring-orange-400"
           />
           <button
             type="submit"
-            className="absolute left-3 top-2.5 text-white opacity-70"
+            className="absolute left-4 top-3 text-white opacity-70"
           >
             <FaSearch />
           </button>
         </form>
 
-        {/* ✅ Product Cards */}
+        {/* ✅ Products List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.length > 0 ? (
             products.map((product) => (
-              <div key={product.id} className="border p-4 rounded-lg shadow">
+              <div
+                key={product.id}
+                className="border p-4 rounded-lg shadow bg-white"
+              >
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-40 object-cover mb-2 rounded"
+                  className="w-full h-44 object-cover mb-2 rounded"
                 />
                 <h3 className="font-bold text-lg">{product.name}</h3>
                 <p className="text-gray-700">Price: ${product.price}</p>
@@ -101,51 +113,60 @@ const Products = () => {
         </div>
 
         {/* ✅ Pagination */}
-        <div className="flex justify-center mt-8 space-x-4">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className={`px-4 py-2 rounded ${
-              currentPage === 1
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-gray-500 text-white hover:bg-gray-600"
-            }`}
-          >
-            Previous
-          </button>
-          <span className="flex items-center font-medium">{currentPage}</span>
-          <button
-            onClick={() => setCurrentPage((prev) => prev + 1)}
-            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-          >
-            Next
-          </button>
-        </div>
+        {products.length > 0 && (
+          <div className="flex justify-center mt-8 space-x-4">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className={`px-4 py-2 rounded ${
+                currentPage === 1
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-gray-500 text-white hover:bg-gray-600"
+              }`}
+            >
+              Previous
+            </button>
+            <span className="flex items-center font-semibold text-gray-800">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className={`px-4 py-2 rounded ${
+                currentPage === totalPages
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-gray-500 text-white hover:bg-gray-600"
+              }`}
+            >
+              Next
+            </button>
+          </div>
+        )}
 
-        {/* ✅ Product Modal */}
+        {/* ✅ Modal for Product Details */}
         {selectedProduct && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg w-11/12 max-w-md relative shadow-lg">
+          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg w-11/12 max-w-md relative shadow-xl">
               <button
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-2 right-2 text-red-500 text-xl"
+                className="absolute top-2 right-2 text-red-500 text-2xl"
               >
-                ✖
+                &times;
               </button>
               <img
                 src={selectedProduct.image}
                 alt={selectedProduct.name}
-                className="w-full h-48 object-cover mb-4 rounded"
+                className="w-full h-52 object-cover mb-4 rounded"
               />
               <h2 className="text-2xl font-bold mb-2">
                 {selectedProduct.name}
               </h2>
               <p className="text-lg mb-1">Price: ${selectedProduct.price}</p>
-              <p className="text-md text-gray-600 mb-1">
+              <p className="text-md text-gray-600 mb-2">
                 Category: {selectedProduct.category}
               </p>
-              <p className="mt-2 text-gray-700">
-                {selectedProduct.description || "No Description Available"}
+              <p className="text-gray-700">
+                {selectedProduct.description || "No Description Available."}
               </p>
             </div>
           </div>
