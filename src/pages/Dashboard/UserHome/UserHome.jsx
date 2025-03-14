@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { FaListAlt, FaCartPlus, FaUserEdit } from 'react-icons/fa';
 import CouponSlider from '../../Dashboard/CouponSlider/CouponSlider';
+import Statistics from '../Statistics/Statistics';
+import Profile from '../Profile/Profile';
 
 const UserHome = ({ user, stats = {}, notifications = [] }) => {
   const greeting = () => {
@@ -16,16 +18,8 @@ const UserHome = ({ user, stats = {}, notifications = [] }) => {
       <p className="text-gray-600">Here is your personalized dashboard.</p>
 
       {/* Profile Overview */}
-      <div className="bg-white p-4 rounded shadow-md border hover:shadow-lg transition">
-        <h2 className="text-xl font-semibold mb-4">Profile Overview</h2>
-        <div className="flex items-center space-x-4">
-          <img src={user?.photoURL || 'https://via.placeholder.com/100'} alt="Profile" className="w-20 h-20 rounded-full" />
-          <div>
-            <p><strong>Name:</strong> {user?.name}</p>
-            <p><strong>Email:</strong> {user?.email}</p>
-            <p><strong>Member Since:</strong> {user?.createdAt?.slice(0, 10)}</p>
-          </div>
-        </div>
+      <div>
+        <Profile />
       </div>
 
       {/* Quick Actions */}
@@ -42,13 +36,8 @@ const UserHome = ({ user, stats = {}, notifications = [] }) => {
       </div>
 
       {/* Statistics */}
-      <div className="bg-white p-4 rounded shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Your Statistics</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-          <StatCard label="Total Products" value={stats.totalProducts} />
-          <StatCard label="Sold Products" value={stats.soldProducts} />
-          <StatCard label="Total Earnings" value={`$${stats.totalEarnings}`} />
-        </div>
+      <div>
+      <Statistics />
       </div>
 
       {/* ✅ Coupon Slider Added */}
@@ -74,11 +63,18 @@ const UserHome = ({ user, stats = {}, notifications = [] }) => {
   );
 };
 
-const StatCard = ({ label, value }) => (
-  <div className="p-4 bg-gray-100 rounded">
-    <p className="text-2xl font-bold">{value ?? 0}</p>
-    <p className="text-gray-600">{label}</p>
-  </div>
-);
+// Reusable StatCard Component
+const StatCard = ({ title, value, color }) => {
+  return (
+      <div className={`rounded-xl shadow-md text-white p-6 ${color}`}>
+          <p className="text-lg font-medium">{title}</p>
+          <p className="text-3xl font-bold mt-2">{value !== undefined ? value : 0}</p>
+      </div>
+  );
+};
+
+// Example use
+<StatCard title="Total Products" value={10} color="bg-gradient-to-r from-indigo-500 to-purple-500" />
+
 
 export default UserHome;

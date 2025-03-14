@@ -29,13 +29,48 @@ const MyProducts = () => {
         .then((res) => res.json())
         .then((data) => {
           if (data.deletedCount > 0) {
-            toast.success("Product deleted successfully");
+            toast.success("Product deleted successfully!");
             // Update product list after delete
-            setProducts(products.filter((product) => product._id !== id));
+            setProducts((prevProducts) =>
+              prevProducts.filter((product) => product._id !== id)
+            );
           }
         })
         .catch((err) => console.error("Delete failed", err));
     }
+  };
+
+  const handleApprove = (id) => {
+    fetch(`http://localhost:5000/products/approve/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: "Accepted" }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to approve product");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data.modifiedCount > 0) {
+          toast.success("Product approved successfully!");
+          // Update local state
+          setProducts((prevProducts) =>
+            prevProducts.map((product) =>
+              product._id === id ? { ...product, status: "Accepted" } : product
+            )
+          );
+        } else {
+          toast.error("Approval failed. Please try again.");
+        }
+      })
+      .catch((err) => {
+        console.error("Approval failed", err);
+        toast.error("Approval failed. Please try again later.");
+      });
   };
 
   return (
@@ -81,6 +116,16 @@ const MyProducts = () => {
                     >
                       Update
                     </Link>
+
+                    {/* ✅ Approve Button (only show if not Accepted) */}
+                    {product.status !== "Accepted" && (
+                      <button
+                        onClick={() => handleApprove(product._id)}
+                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+                      >
+                        Approve
+                      </button>
+                    )}
 
                     {/* ✅ Delete Button */}
                     <button
