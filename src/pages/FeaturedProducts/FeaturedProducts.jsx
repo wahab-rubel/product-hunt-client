@@ -9,16 +9,13 @@ const FeaturedProducts = () => {
   const { user } = useAuth() || {};
   const navigate = useNavigate();
 
-  // 🔹 Fetch products function
+  // ✅ Fetch Products
   const fetchProducts = useCallback(async () => {
     try {
       const res = await fetch("http://localhost:5000/products");
       if (!res.ok) throw new Error("Failed to fetch");
-
       const data = await res.json();
-      console.log("Fetched products:", data); // ✅ Check in console
-
-      setProducts(data.products); // Adjust here if response has products key
+      setProducts(data.products);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -26,29 +23,23 @@ const FeaturedProducts = () => {
     }
   }, []);
 
-  // ✅ UseEffect to call fetchProducts
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
-  // 🔹 API Call: Upvote a Product
+  // ✅ Upvote API Call
   const upvoteProduct = async (productId) => {
     try {
       const response = await fetch(
         `http://localhost:5000/api/products/${productId}/upvote`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userId: user?.uid }), // Ensure the user ID is sent
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user?.uid }),
         }
       );
-
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(`Error upvoting: ${response.statusText}`);
-      }
-
       return await response.json();
     } catch (error) {
       console.error("❌ Error upvoting:", error);
@@ -56,101 +47,95 @@ const FeaturedProducts = () => {
     }
   };
 
-  // 🔹 Handle Upvote Function
+  // ✅ Handle Upvote
   const handleUpvote = async (productId, ownerId, hasVoted) => {
-    if (!user) {
-      console.log("❌ User not logged in!");
-      return navigate("/login");
-    }
-    if (user.uid === ownerId) {
-      console.log("❌ Cannot upvote own product!");
-      return;
-    }
-    if (hasVoted) {
-      console.log("❌ User already voted!");
-      return;
-    }
+    if (!user) return navigate("/login");
+    if (user.uid === ownerId) return;
+    if (hasVoted) return;
 
-    try {
-      const data = await upvoteProduct(productId);
-
-      if (data?.success) {
-        // Update local state with the new vote count
-        setProducts((prevProducts) =>
-          prevProducts.map((p) =>
-            p._id === productId
-              ? {
-                  ...p,
-                  votes: data.updatedVotes,
-                  votedBy: [...p.votedBy, user.uid],
-                }
-              : p
-          )
-        );
-      }
-    } catch (err) {
-      console.error("❌ Error upvoting:", err);
+    const data = await upvoteProduct(productId);
+    if (data?.success) {
+      setProducts((prevProducts) =>
+        prevProducts.map((p) =>
+          p._id === productId
+            ? {
+                ...p,
+                votes: data.updatedVotes,
+                votedBy: [...(p.votedBy || []), user.uid],
+              }
+            : p
+        )
+      );
     }
   };
 
+  // ✅ Render Products
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Featured Products</h2>
+    <div className="max-w-7xl mx-auto px-4 py-12">
+      <h2 className="text-4xl font-extrabold mb-12 text-center text-gray-800">
+        ✨ Featured <span className="text-orange-500">Products</span>
+      </h2>
 
       {loading ? (
-        <p className="text-center text-lg font-semibold">Loading...</p>
+        <p className="text-center text-lg font-semibold text-gray-500">
+          Loading...
+        </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {products.length > 0 ? (
-            products.map((product) => (
-              <div
-                key={product._id}
-                className="border p-4 rounded-lg shadow-md"
-              >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-48 object-cover rounded-md"
-                />
-                <h3
-                  className="text-lg font-semibold mt-2 cursor-pointer"
-                  onClick={() => navigate(`/products/${product._id}`)}
-                >
-                  {product.name}
-                </h3>
-                <p className="text-sm text-gray-500">
-                  Tags: {product.tags?.join(", ")}
-                </p>
-                <div className="flex justify-between items-center mt-3">
-                  <button
-                    onClick={() => {
-                      if (product && product._id && user) {
-                        handleUpvote(
-                          product._id,
-                          product.ownerId,
-                          product.votedBy?.includes(user?.uid)
-                        );
-                      } else {
-                        console.log("❌ Invalid product or user state");
-                      }
-                    }}
-                    disabled={
-                      user?.uid === product.ownerId ||
-                      product.votedBy?.includes(user?.uid)
-                    }
-                    className="flex items-center space-x-2 bg-blue-500 text-white px-3 py-1 rounded disabled:bg-gray-400"
-                  >
-                    <FaArrowUp /> <span>{product.votes}</span>
-                  </button>
+            products.map((product) => {
+              const isVoted = (product.votedBy || []).includes(user?.uid);
 
-                  <button className="text-red-500" title="Report Product">
-                    <FaFlag />
-                  </button>
+              return (
+                <div
+                  key={product._id}
+                  className="relative bg-gradient-to-br from-slate-700 to-red-950 rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 border border-orange-200"
+                >
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="p-5 flex flex-col h-full">
+                    <h3
+                      onClick={() => navigate(`/products/${product._id}`)}
+                      className="text-lg font-bold text-gray-800 mb-3 cursor-pointer hover:text-orange-500 transition-colors duration-200 line-clamp-1"
+                    >
+                      {product.name}
+                    </h3>
+
+                    <p className="text-sm text-gray-500 mb-5 line-clamp-2 italic">
+                      Tags: {product.tags?.join(", ") || "No tags"}
+                    </p>
+
+                    <div className="mt-auto flex justify-between items-center gap-2">
+                      <button
+                        onClick={() =>
+                          handleUpvote(product._id, product.ownerId, isVoted)
+                        }
+                        disabled={user?.uid === product.ownerId || isVoted}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold shadow-sm transition-all duration-300 ${
+                          user?.uid === product.ownerId || isVoted
+                            ? "bg-orange-700 text-gray-600 cursor-not-allowed"
+                            : "bg-gradient-to-r from-orange-500 to-orange-400 text-white hover:from-orange-600 hover:to-orange-500"
+                        }`}
+                      >
+                        <FaArrowUp /> <span>{product.votes || 0}</span>
+                      </button>
+
+                      <button
+                        title="Report Product"
+                        className="flex items-center justify-center bg-red-700 hover:bg-red-200 text-red-500 rounded-full p-2 transition-colors duration-300"
+                      >
+                        <FaFlag size={16} />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
-            <p>No products available</p>
+            <p className="text-center text-gray-500">No products available</p>
           )}
         </div>
       )}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import NavBar from "../../components/Navbar";
 import axios from "axios";
 
@@ -16,20 +16,23 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [query, setQuery] = useState(urlSearchQuery);
   const [search, setSearch] = useState(urlSearchQuery);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(searchParams.get("page")) || 1
+  );
   const [totalPages, setTotalPages] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0); // for slider
   const productsPerPage = 6;
 
-  // ✅ Fetch products on search or pagination change
+  // ✅ Fetch products when search or pagination changes
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const url = `http://localhost:5000/products?search=${search}&page=${currentPage}&limit=${productsPerPage}`;
-        console.log("Fetching URL:", url); // Debug purpose
+        console.log("Fetching URL:", url);
 
         const response = await axios.get(url);
-        console.log("Fetched Products:", response.data); // Debug purpose
+        console.log("Fetched Products:", response.data);
 
         setProducts(response.data.products || []);
         setTotalPages(response.data.totalPages || 1);
@@ -39,22 +42,39 @@ const Products = () => {
     };
 
     fetchProducts();
-  }, [search, currentPage]);
+    navigate(`/products?search=${search}&page=${currentPage}`, { replace: true });
+  }, [search, currentPage, navigate]);
 
   // ✅ Handle search submission
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    const trimmedQuery = query.trim();
+    const trimmedQuery = query.trim().toLowerCase();
     if (trimmedQuery !== "") {
       setSearch(trimmedQuery);
       setCurrentPage(1);
-      navigate(`/products?search=${trimmedQuery}`);
     }
   };
 
   // ✅ Pagination Controls
-  const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-  const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  // ✅ Slider Controls
+  const handlePrevSlide = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? products.length - 1 : prevIndex - 1
+    );
+  };
+
+  const handleNextSlide = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === products.length - 1 ? 0 : prevIndex + 1
+    );
+  };
 
   return (
     <>
@@ -81,7 +101,44 @@ const Products = () => {
           </button>
         </form>
 
-        {/* ✅ Products List */}
+        {/* ✅ Product Slider Section */}
+        {products.length > 0 && (
+          <div className="relative w-full max-w-4xl mx-auto overflow-hidden mb-10">
+            <div
+              className="flex transition-transform duration-500"
+              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            >
+              {products.map((product) => (
+                <div key={product.id} className="min-w-full p-4">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-64 object-cover rounded-lg mb-4"
+                  />
+                  <h3 className="font-bold text-lg">{product.name}</h3>
+                  <p className="text-gray-700">Price: ${product.price}</p>
+                  <p className="text-gray-500">Category: {product.category}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Prev & Next Buttons */}
+            <button
+              onClick={handlePrevSlide}
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full"
+            >
+              <FaArrowLeft />
+            </button>
+            <button
+              onClick={handleNextSlide}
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full"
+            >
+              <FaArrowRight />
+            </button>
+          </div>
+        )}
+
+        {/* ✅ Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.length > 0 ? (
             products.map((product) => (
@@ -158,9 +215,7 @@ const Products = () => {
                 alt={selectedProduct.name}
                 className="w-full h-52 object-cover mb-4 rounded"
               />
-              <h2 className="text-2xl font-bold mb-2">
-                {selectedProduct.name}
-              </h2>
+              <h2 className="text-2xl font-bold mb-2">{selectedProduct.name}</h2>
               <p className="text-lg mb-1">Price: ${selectedProduct.price}</p>
               <p className="text-md text-gray-600 mb-2">
                 Category: {selectedProduct.category}
