@@ -24,7 +24,6 @@ import UpdateProduct from '../pages/Dashboard/UpdateProduct/UpdateProduct';
 
 // Admin Dashboard Pages
 import AdminHome from '../pages/Dashboard/AdminHome/AdminHome';
-import UpdateItem from '../pages/Dashboard/UpdateItem/UpdateItem';
 import AllUsers from '../pages/Dashboard/AllUsers/AllUsers';
 import Statistics from '../pages/Dashboard/Statistics/Statistics';
 import ManageUsers from '../pages/Dashboard/ManageUsers/ManageUsers';
@@ -60,7 +59,6 @@ export const router = createBrowserRouter([
 
       // ✅ Admin Dashboard Routes
       { path: 'adminHome', element: <AdminRoute><AdminHome /></AdminRoute> },
-      { path: 'updateItem/:id', element: <AdminRoute><UpdateItem /></AdminRoute> },
       { path: 'users', element: <AdminRoute><AllUsers /></AdminRoute> },
 
       // ✅ Extra Admin Management Routes

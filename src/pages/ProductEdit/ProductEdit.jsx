@@ -42,7 +42,7 @@ const ProductEdit = () => {
     if (imageFile) formData.append('image', imageFile); // Only append if a new image selected
 
     try {
-      const response = await axios.patch(`http://localhost:5000/products/${id}`, formData, {
+      const response = await axios.patch(`https://product-hunt-server-tawny.vercel.app/products/${id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       console.log('Product updated:', response.data);

@@ -28,7 +28,7 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const url = `http://localhost:5000/products?search=${search}&page=${currentPage}&limit=${productsPerPage}`;
+        const url = `https://product-hunt-server-tawny.vercel.app/products?search=${search}&page=${currentPage}&limit=${productsPerPage}`;
         console.log("Fetching URL:", url);
 
         const response = await axios.get(url);

@@ -34,7 +34,7 @@ const TrendingProducts = () => {
     }
 
     try {
-      await axios.post(`http://localhost:5000/products/upvote/${id}`, {
+      await axios.post(`https://product-hunt-server-tawny.vercel.app/products/upvote/${id}`, {
         userId: user.uid,
       });
       setProducts((prevProducts) =>
