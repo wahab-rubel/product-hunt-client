@@ -30,6 +30,7 @@ import Statistics from '../pages/Dashboard/Statistics/Statistics';
 import ManageUsers from '../pages/Dashboard/ManageUsers/ManageUsers';
 import ManageCoupons from '../pages/Dashboard/ManageCoupons/ManageCoupons';
 import ProductReviewQueue from '../components/ProductReviewQueue/ProductReviewQueue';
+import ContactForm from '../components/ContactForm/ContactForm'
 
 export const router = createBrowserRouter([
   // 🌐 Public Routes
@@ -39,6 +40,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'products', element: <Products /> },
+      { path: 'contact', element: <ContactForm />},
       { path: 'login', element: <Login /> },
       { path: 'signup', element: <SignUp /> },
     ],
