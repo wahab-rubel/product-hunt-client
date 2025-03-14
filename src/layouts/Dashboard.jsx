@@ -29,9 +29,9 @@ const Dashboard = () => {
             Product<span className="text-yellow-500">Hunt</span>
           </Link>
           <div className="space-x-6 text-lg">
-            <NavLink to="/" className="hover:text-yellow-500 transition">Home</NavLink>
-            <NavLink to="/products" className="hover:text-yellow-500 transition">Products</NavLink>
-            <NavLink to="/contact" className="hover:text-yellow-500 transition">Contact</NavLink>
+            <NavLink to="/" className="hover:text-yellow-500 transition text-xl font-extrabold text-cyan-500">Home</NavLink>
+            <NavLink to="/products" className="hover:text-yellow-500 transition text-xl font-extrabold text-cyan-500">Products</NavLink>
+            <NavLink to="/contact" className="hover:text-yellow-500 transition text-xl font-extrabold text-cyan-500">Contact</NavLink>
           </div>
         </nav>
       </header>
