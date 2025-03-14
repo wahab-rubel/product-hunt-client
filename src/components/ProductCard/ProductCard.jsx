@@ -13,7 +13,7 @@ const ProductCard = ({ product, currentUser }) => {
   // ---------------------- 🧡 Vote Mutation ---------------------- //
   const voteMutation = useMutation(
     async ({ id, type }) => {
-      const response = await axios.patch(`https://product-hunt-server-tawny.vercel.app/products/${id}/vote`, {
+      const response = await axios.patch(`http://localhost:5000/products/${id}/vote`, {
         type,
         userEmail: currentUser?.email, // Dynamic user email
       });
