@@ -18,7 +18,7 @@ const UpdateProduct = () => {
   const [imagePreview, setImagePreview] = useState(null);
 
   // ✅ Base URL for your backend
-  const BASE_URL = 'https://product-hunt-server-tawny.vercel.app/products';
+  const BASE_URL = 'http://localhost:5000/products';
 
   // ✅ Fetch existing product data on component mount
   useEffect(() => {

@@ -10,7 +10,7 @@ const MyProducts = () => {
   // ✅ Fetch user's products when page loads
   useEffect(() => {
     if (user?.email) {
-      fetch(`https://product-hunt-server-tawny.vercel.app/products?userEmail=${user.email}`)
+      fetch(`http://localhost:5000/products?userEmail=${user.email}`)
         .then((res) => res.json())
         .then((data) => {
           console.log("Fetched Products:", data); // Check API data
@@ -23,7 +23,7 @@ const MyProducts = () => {
   // ✅ Handle Delete Product
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      fetch(`https://product-hunt-server-tawny.vercel.app/products/${id}`, {
+      fetch(`http://localhost:5000/products/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -41,7 +41,7 @@ const MyProducts = () => {
   };
 
   const handleApprove = (id) => {
-    fetch(`https://product-hunt-server-tawny.vercel.app/products/approve/${id}`, {
+    fetch(`http://localhost:5000/products/approve/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

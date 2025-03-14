@@ -29,7 +29,11 @@ import Statistics from '../pages/Dashboard/Statistics/Statistics';
 import ManageUsers from '../pages/Dashboard/ManageUsers/ManageUsers';
 import ManageCoupons from '../pages/Dashboard/ManageCoupons/ManageCoupons';
 import ProductReviewQueue from '../components/ProductReviewQueue/ProductReviewQueue';
-import ContactForm from '../components/ContactForm/ContactForm'
+import ContactForm from '../components/ContactForm/ContactForm';
+
+// Moderator Specific
+import ModeratorRoute from '../Routes/ModeratorRoute.jsx'; 
+import ReportedContents from '../pages/ReportedContents/ReportedContents.jsx'; 
 
 export const router = createBrowserRouter([
   // 🌐 Public Routes
@@ -39,7 +43,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'products', element: <Products /> },
-      { path: 'contact', element: <ContactForm />},
+      { path: 'contact', element: <ContactForm /> },
       { path: 'login', element: <Login /> },
       { path: 'signup', element: <SignUp /> },
     ],
@@ -65,9 +69,11 @@ export const router = createBrowserRouter([
       { path: 'statistics', element: <AdminRoute><Statistics /></AdminRoute> },
       { path: 'manage-users', element: <AdminRoute><ManageUsers /></AdminRoute> },
       { path: 'manage-coupons', element: <AdminRoute><ManageCoupons /></AdminRoute> },
-
-      // ✅ 🎯 Product Review Queue Route
       { path: 'product-review', element: <AdminRoute><ProductReviewQueue /></AdminRoute> },
+
+      // ✅ Moderator Dashboard Routes
+      { path: 'review-queue', element: <ModeratorRoute><ProductReviewQueue /></ModeratorRoute> },
+      { path: 'reported-contents', element: <ModeratorRoute><ReportedContents /></ModeratorRoute> },
     ],
   },
 

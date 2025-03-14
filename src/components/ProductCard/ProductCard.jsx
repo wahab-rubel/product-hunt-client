@@ -32,7 +32,7 @@ const ProductCard = ({ product, currentUser }) => {
   // ---------------------- 💛 Bookmark Mutation ---------------------- //
   const bookmarkMutation = useMutation(
     async (id) => {
-      const response = await axios.post(`https://product-hunt-server-tawny.vercel.app/products/${id}/bookmark`, {
+      const response = await axios.post(`http://localhost:5000/products/${id}/bookmark`, {
         userEmail: currentUser?.email,
       });
       return response.data;

@@ -8,7 +8,7 @@ const CouponSlider = () => {
 
   // Fetch coupons from backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/coupons")
+    fetch("http://localhost:5000/products/coupons")
       .then((res) => res.json())
       .then((data) => {
         console.log("Coupons:", data.coupons);

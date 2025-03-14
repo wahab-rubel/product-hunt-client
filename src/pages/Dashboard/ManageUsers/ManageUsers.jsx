@@ -24,7 +24,7 @@ const ManageUsers = () => {
   };
 
   const handleMakeModerator = (id) => {
-    fetch(`https://your-server-url.com/users/moderator/${id}`, {
+    fetch(`http://localhost:5000/users/moderator/${id}`, {
       method: 'PATCH',
     })
       .then(res => res.json())

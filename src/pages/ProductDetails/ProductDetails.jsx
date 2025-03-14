@@ -13,7 +13,7 @@ const ProductDetails = () => {
 
   
   useEffect(() => {
-    fetch(`https://product-hunt-server-tawny.vercel.app/products/reviews?productId=${id}`)
+    fetch(`http://localhost:5000/products/reviews?productId=${id}`)
       .then((res) => res.json())
       .then((data) => setReviews(data));
   }, [id]);
