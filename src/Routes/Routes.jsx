@@ -47,7 +47,7 @@ export const router = createBrowserRouter([
         element: <Products />,
         loader: async () => {
           const res = await fetch(
-            "https://product-hunt-server-tawny.vercel.app/products"
+            "https://product-hunt-server-tawny.vercel.appproducts"
           );
           if (!res.ok) throw new Error("Failed to load products");
           return res.json();
@@ -76,7 +76,7 @@ export const router = createBrowserRouter([
         path: "myproducts",
         element: <MyProducts />,
         loader: () =>
-          fetch(`https://product-hunt-server-tawny.vercel.app/myproducts`), // Assuming user's products
+          fetch(`https://product-hunt-server-tawny.vercel.appmyproducts`), // Assuming user's products
       },
       {
         path: "updateproduct/:id",
@@ -87,7 +87,7 @@ export const router = createBrowserRouter([
         ),
         loader: ({ params }) =>
           fetch(
-            `https://product-hunt-server-tawny.vercel.app/products/${params.id}`
+            `https://product-hunt-server-tawny.vercel.appproducts/${params.id}`
           ), // Single product for update
       },
 
@@ -108,7 +108,7 @@ export const router = createBrowserRouter([
           </AdminRoute>
         ),
         loader: () =>
-          fetch(`https://product-hunt-server-tawny.vercel.app/users`), // All users list
+          fetch(`https://product-hunt-server-tawny.vercel.appusers`), // All users list
       },
 
       // ✅ Extra Admin Management Routes
@@ -120,7 +120,7 @@ export const router = createBrowserRouter([
           </AdminRoute>
         ),
         loader: () =>
-          fetch(`https://product-hunt-server-tawny.vercel.app/statistics`), // Assuming statistics data
+          fetch(`https://product-hunt-server-tawny.vercel.appstatistics`), // Assuming statistics data
       },
       // Manage Users page for Admin
       {
@@ -144,7 +144,7 @@ export const router = createBrowserRouter([
           </AdminRoute>
         ),
         loader: () =>
-          fetch(`https://product-hunt-server-tawny.vercel.app/coupons`), // Coupons data
+          fetch(`https://product-hunt-server-tawny.vercel.appcoupons`), // Coupons data
       },
       {
         path: "product-review",
@@ -154,7 +154,7 @@ export const router = createBrowserRouter([
           </AdminRoute>
         ),
         loader: () =>
-          fetch(`https://product-hunt-server-tawny.vercel.app/product-review`), // Product review queue
+          fetch(`https://product-hunt-server-tawny.vercel.appproduct-review`), // Product review queue
       },
 
       // ✅ Moderator Dashboard Routes
@@ -166,7 +166,7 @@ export const router = createBrowserRouter([
           </ModeratorRoute>
         ),
         loader: () =>
-          fetch(`https://product-hunt-server-tawny.vercel.app/product-review`), // Same as admin product review
+          fetch(`https://product-hunt-server-tawny.vercel.appproduct-review`), // Same as admin product review
       },
       {
         path: "reported-contents",
@@ -177,7 +177,7 @@ export const router = createBrowserRouter([
         ),
         loader: () =>
           fetch(
-            `https://product-hunt-server-tawny.vercel.app/reported-contents`
+            `https://product-hunt-server-tawny.vercel.appreported-contents`
           ), // Reported contents
       },
     ],

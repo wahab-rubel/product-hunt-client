@@ -7,7 +7,7 @@ const ReportedContents = () => {
 
   // ✅ Fetch reported products
   useEffect(() => {
-    fetch(`https://product-hunt-server-tawny.vercel.app/reported-products`) 
+    fetch(`https://product-hunt-server-tawny.vercel.appreported-products`) 
       .then((res) => res.json())
       .then((data) => setReportedProducts(data))
       .catch((error) =>
@@ -23,7 +23,7 @@ const ReportedContents = () => {
     if (!confirmDelete) return;
 
     fetch(
-      `https://product-hunt-server-tawny.vercel.app/products/${productId}`,
+      `https://product-hunt-server-tawny.vercel.appproducts/${productId}`,
       {
         method: "DELETE",
       }
