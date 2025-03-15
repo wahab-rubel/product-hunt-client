@@ -38,30 +38,32 @@ const MyProducts = () => {
 
   // ✅ Handle Approve
   const handleApprove = (id) => {
-    fetch(
-      `https://product-hunt-server-tawny.vercel.app/products/approve/${id}`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "Accepted" }),
-      }
-    )
+    fetch(`https://product-hunt-server-tawny.vercel.app/products/approve/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'Accepted' }),
+    })
       .then((res) => res.json())
       .then((data) => {
+        console.log('Approval Response:', data);
         if (data.modifiedCount > 0) {
-          toast.success("Product approved successfully!");
+          toast.success('Product approved successfully!');
+          // Update local state to reflect status change
           setProducts((prev) =>
-            prev.map((p) => (p._id === id ? { ...p, status: "Accepted" } : p))
+            prev.map((product) =>
+              product._id === id ? { ...product, status: 'Accepted' } : product
+            )
           );
         } else {
-          toast.error("Approval failed. Try again.");
+          toast.error('Approval failed. Try again.');
         }
       })
-      .catch((err) => {
-        console.error("Approval failed", err);
-        toast.error("Approval failed. Please try again later.");
+      .catch((error) => {
+        console.error('Approval failed', error);
+        toast.error('Approval failed. Please try again later.');
       });
   };
+  
 
   return (
     <div className="max-w-7xl mx-auto p-4">
@@ -114,11 +116,11 @@ const MyProducts = () => {
                     {/* Approve Button */}
                     {product.status !== "Accepted" && (
                       <button
-                        onClick={() => handleApprove(product._id)}
-                        className="bg-green-500 hover:bg-green-600 transition text-white text-xs px-3 py-1 rounded shadow"
-                      >
-                        Approve
-                      </button>
+                      onClick={() => handleApprove(product._id)}
+                      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                    >
+                      Approve
+                    </button>                    
                     )}
 
                     {/* Delete Button */}
