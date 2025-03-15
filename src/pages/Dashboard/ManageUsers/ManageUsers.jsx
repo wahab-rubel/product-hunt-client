@@ -4,13 +4,13 @@ const ManageUsers = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/users') // Your API endpoint
+    fetch('https://product-hunt-server-tawny.vercel.app/users') // Your API endpoint
       .then(res => res.json())
       .then(data => setUsers(data));
   }, []);
 
   const handleMakeAdmin = (id) => {
-    fetch(`http://localhost:5000/users/admin/${id}`, {
+    fetch(`https://product-hunt-server-tawny.vercel.app/users/admin/${id}`, {
       method: 'PATCH',
     })
       .then(res => res.json())
@@ -24,7 +24,7 @@ const ManageUsers = () => {
   };
 
   const handleMakeModerator = (id) => {
-    fetch(`http://localhost:5000/users/moderator/${id}`, {
+    fetch(`https://product-hunt-server-tawny.vercel.app/users/moderator/${id}`, {
       method: 'PATCH',
     })
       .then(res => res.json())

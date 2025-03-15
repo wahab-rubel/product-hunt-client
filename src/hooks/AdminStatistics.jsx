@@ -5,7 +5,7 @@ const AdminStatistics = () => {
   const [stats, setStats] = useState({});
 
   useEffect(() => {
-    fetch('http://localhost:5000/admin/statistics')
+    fetch('https://product-hunt-server-tawny.vercel.app/admin/statistics')
       .then(res => res.json())
       .then(data => setStats(data));
   }, []);

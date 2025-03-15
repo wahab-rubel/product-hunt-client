@@ -42,7 +42,11 @@ export const router = createBrowserRouter([
     element: <Main />,
     children: [
       { index: true, element: <Home /> },
-      { path: 'products', element: <Products /> },
+      { 
+        path: 'products', 
+        element: <Products />,
+        loader: () => fetch(`https://product-hunt-server-tawny.vercel.app/products`)
+      },
       { path: 'contact', element: <ContactForm /> },
       { path: 'login', element: <Login /> },
       { path: 'signup', element: <SignUp /> },
@@ -58,22 +62,61 @@ export const router = createBrowserRouter([
       { path: 'userHome', element: <UserHome /> },
       { path: 'profile', element: <Profile /> },
       { path: 'addproduct', element: <AddProduct /> },
-      { path: 'myproducts', element: <MyProducts /> },
-      { path: 'updateproduct/:id', element: <PrivateRoute><UpdateProduct /></PrivateRoute> },
+      { 
+        path: 'myproducts', 
+        element: <MyProducts />,
+        loader: () => fetch(`https://product-hunt-server-tawny.vercel.app/myproducts`) // Assuming user's products
+      },
+      { 
+        path: 'updateproduct/:id', 
+        element: <PrivateRoute><UpdateProduct /></PrivateRoute>,
+        loader: ({ params }) => fetch(`https://product-hunt-server-tawny.vercel.app/products/${params.id}`) // Single product for update
+      },
 
       // ✅ Admin Dashboard Routes
-      { path: 'adminHome', element: <AdminRoute><AdminHome /></AdminRoute> },
-      { path: 'users', element: <AdminRoute><AllUsers /></AdminRoute> },
+      { 
+        path: 'adminHome', 
+        element: <AdminRoute><AdminHome /></AdminRoute> 
+      },
+      { 
+        path: 'users', 
+        element: <AdminRoute><AllUsers /></AdminRoute>,
+        loader: () => fetch(`https://product-hunt-server-tawny.vercel.app/users`) // All users list
+      },
 
       // ✅ Extra Admin Management Routes
-      { path: 'statistics', element: <AdminRoute><Statistics /></AdminRoute> },
-      { path: 'manage-users', element: <AdminRoute><ManageUsers /></AdminRoute> },
-      { path: 'manage-coupons', element: <AdminRoute><ManageCoupons /></AdminRoute> },
-      { path: 'product-review', element: <AdminRoute><ProductReviewQueue /></AdminRoute> },
+      { 
+        path: 'statistics', 
+        element: <AdminRoute><Statistics /></AdminRoute>,
+        loader: () => fetch(`https://product-hunt-server-tawny.vercel.app/statistics`) // Assuming statistics data
+      },
+      { 
+        path: 'manage-users', 
+        element: <AdminRoute><ManageUsers /></AdminRoute>,
+        loader: () => fetch(`https://product-hunt-server-tawny.vercel.app/users`) // Manage users
+      },
+      { 
+        path: 'manage-coupons', 
+        element: <AdminRoute><ManageCoupons /></AdminRoute>,
+        loader: () => fetch(`https://product-hunt-server-tawny.vercel.app/coupons`) // Coupons data
+      },
+      { 
+        path: 'product-review', 
+        element: <AdminRoute><ProductReviewQueue /></AdminRoute>,
+        loader: () => fetch(`https://product-hunt-server-tawny.vercel.app/product-review`) // Product review queue
+      },
 
       // ✅ Moderator Dashboard Routes
-      { path: 'review-queue', element: <ModeratorRoute><ProductReviewQueue /></ModeratorRoute> },
-      { path: 'reported-contents', element: <ModeratorRoute><ReportedContents /></ModeratorRoute> },
+      { 
+        path: 'review-queue', 
+        element: <ModeratorRoute><ProductReviewQueue /></ModeratorRoute>,
+        loader: () => fetch(`https://product-hunt-server-tawny.vercel.app/product-review`) // Same as admin product review
+      },
+      { 
+        path: 'reported-contents', 
+        element: <ModeratorRoute><ReportedContents /></ModeratorRoute>,
+        loader: () => fetch(`https://product-hunt-server-tawny.vercel.app/reported-contents`) // Reported contents
+      },
     ],
   },
 

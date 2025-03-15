@@ -6,7 +6,7 @@ const ManageCoupons = () => {
 
   // Fetch Coupons
   useEffect(() => {
-    fetch('http://localhost:5000/products/api/coupons')
+    fetch('https://product-hunt-server-tawny.vercel.app/products/api/coupons')
       .then(res => res.json())
       .then(data => setCoupons(data.coupons));
   }, []);
@@ -14,7 +14,7 @@ const ManageCoupons = () => {
   // Add Coupon
   const handleAddCoupon = async (e) => {
     e.preventDefault();
-    const res = await fetch('http://localhost:5000/products/api/coupons', {
+    const res = await fetch('https://product-hunt-server-tawny.vercel.app/products/api/coupons', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
@@ -25,7 +25,7 @@ const ManageCoupons = () => {
 
   // Delete Coupon
   const handleDelete = async (id) => {
-    await fetch(`http://localhost:5000/products/api/coupons/${id}`, { method: 'DELETE' });
+    await fetch(`https://product-hunt-server-tawny.vercel.app/products/api/coupons/${id}`, { method: 'DELETE' });
     setCoupons(coupons.filter(c => c._id !== id));
   };
 

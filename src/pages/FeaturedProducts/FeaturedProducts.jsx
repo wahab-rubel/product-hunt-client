@@ -12,7 +12,7 @@ const FeaturedProducts = () => {
   // ✅ Fetch Products
   const fetchProducts = useCallback(async () => {
     try {
-      const res = await fetch(`http://localhost:5000/products`);
+      const res = await fetch(`https://product-hunt-server-tawny.vercel.app/products`);
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
       setProducts(data.products);
@@ -31,7 +31,7 @@ const FeaturedProducts = () => {
   const upvoteProduct = async (productId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/products/${productId}/upvote`,
+        `https://product-hunt-server-tawny.vercel.app/api/products/${productId}/upvote`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

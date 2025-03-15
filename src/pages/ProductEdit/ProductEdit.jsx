@@ -42,7 +42,7 @@ const ProductEdit = () => {
     if (imageFile) formData.append('image', imageFile); // Only append if a new image selected
 
     try {
-      const response = await axios.patch(`http://localhost:5000/products/${id}`, formData, {
+      const response = await axios.patch(`https://product-hunt-server-tawny.vercel.app/products/${id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       console.log('Product updated:', response.data);
@@ -97,7 +97,7 @@ const ProductEdit = () => {
       {/* Preview Old or Selected Image */}
       {product.image && (
         <img
-          src={imageFile ? URL.createObjectURL(imageFile) : `http://localhost:5000/uploads/${product.image}`}
+          src={imageFile ? URL.createObjectURL(imageFile) : `https://product-hunt-server-tawny.vercel.app/uploads/${product.image}`}
           alt="Product"
           className="w-32 h-32 object-cover mb-3"
         />
