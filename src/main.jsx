@@ -14,7 +14,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <GoogleOAuthProvider clientId="876769036711-0mednp1a6h9imbhp1in9u6j88slipjnb.apps.googleusercontent.com">
-          <RouterProvider router={router} />
+          {/* ✅ fallbackElement Added for Hydration Issue */}
+          <RouterProvider router={router} fallbackElement={<div>Loading...</div>} />
         </GoogleOAuthProvider>
       </QueryClientProvider>
     </AuthProvider>

@@ -12,7 +12,7 @@ const TrendingProducts = () => {
   
   useEffect(() => {
     axios
-      .get("https://your-api-url.com/products") 
+      .get(`https://product-hunt-server-eight-flax.vercel.app/products`) 
       .then((res) => {
         const sortedProducts = res.data
           .filter((product) => product.isFeatured) 
@@ -34,7 +34,7 @@ const TrendingProducts = () => {
     }
 
     try {
-      await axios.post(`https://product-hunt-server-tawny.vercel.appproducts/upvote/${id}`, {
+      await axios.post(`https://product-hunt-server-eight-flax.vercel.app/products/upvote/${id}`, {
         userId: user.uid,
       });
       setProducts((prevProducts) =>

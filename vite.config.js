@@ -11,7 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://product-hunt-server-tawny.vercel.app',
+        target: 'https://product-hunt-server-n68wm3en9-wahab-rubels-projects.vercel.app/',
         changeOrigin: true,
         secure: false,
       },

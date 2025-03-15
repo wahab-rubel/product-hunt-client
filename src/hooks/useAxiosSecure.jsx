@@ -4,7 +4,7 @@ import useAuth from "./useAuth";
 
 // Create instance (only once)
 const axiosSecure = axios.create({
-    baseURL: 'https://product-hunt-server-tawny.vercel.app', // Correct base URL
+    baseURL: `https://product-hunt-server-eight-flax.vercel.app/products`, // Correct base URL
 });
 
 // Add request interceptor (once)

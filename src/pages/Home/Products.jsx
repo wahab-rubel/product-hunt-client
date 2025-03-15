@@ -26,21 +26,21 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const url = `https://product-hunt-server-tawny.vercel.app/products?search=${search}&page=${currentPage}&limit=${productsPerPage}`;
+        const url = `https://product-hunt-server-eight-flax.vercel.app/products?search=${search}&page=${currentPage}&limit=${productsPerPage}`;
+        console.log("Fetching URL:", url); // ✅ See exact URL
         const response = await axios.get(url);
+        console.log("Fetched Products:", response.data); // ✅ See response data
         setProducts(response.data.products || []);
         setTotalPages(response.data.totalPages || 1);
       } catch (error) {
-        console.error("Failed to fetch products:", error);
+        console.error("Failed to fetch products:", error); // ✅ See full error
       }
     };
-
+  
     fetchProducts();
-    navigate(`/products?search=${search}&page=${currentPage}`, {
-      replace: true,
-    });
+    navigate(`/products?search=${search}&page=${currentPage}`, { replace: true });
   }, [search, currentPage, navigate]);
-
+  
   // ✅ Search submission
   const handleSearchSubmit = (e) => {
     e.preventDefault();

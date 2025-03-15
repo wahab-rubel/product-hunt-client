@@ -22,7 +22,7 @@ const SocialLogin = () => {
       };
 
       // Send user info to the backend
-      await axios.post("https://product-hunt-server-tawny.vercel.appusers", userInfo);
+      await axios.post(`https://product-hunt-server-eight-flax.vercel.app/products/users`, userInfo);
       console.log("User data is added", userInfo);
 
       navigate("/"); // Redirect to home page

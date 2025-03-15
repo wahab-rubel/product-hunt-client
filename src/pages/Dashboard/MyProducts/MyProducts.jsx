@@ -11,7 +11,7 @@ const MyProducts = () => {
   useEffect(() => {
     if (user?.email) {
       fetch(
-        `https://product-hunt-server-tawny.vercel.appproducts?userEmail=${user.email}`
+        `https://product-hunt-server-eight-flax.vercel.app/products?userEmail=${user.email}`
       )
         .then((res) => res.json())
         .then((data) => setProducts(data.products || []))
@@ -22,7 +22,7 @@ const MyProducts = () => {
   // ✅ Handle Delete
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      fetch(`https://product-hunt-server-tawny.vercel.appproducts/${id}`, {
+      fetch(`https://product-hunt-server-eight-flax.vercel.app/products/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -38,7 +38,7 @@ const MyProducts = () => {
 
   // ✅ Handle Approve
   const handleApprove = (id) => {
-    fetch(`https://product-hunt-server-tawny.vercel.appproducts/approve/${id}`, {
+    fetch(`https://product-hunt-server-eight-flax.vercel.app/products/approve/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'Accepted' }),

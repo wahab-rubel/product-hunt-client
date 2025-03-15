@@ -7,7 +7,7 @@ const ProductReviewQueue = () => {
 
   // Fetch posted products from API or local data
   useEffect(() => {
-    fetch(`https://product-hunt-server-tawny.vercel.appproducts`) // ✅ Replace this with your actual API
+    fetch(`https://product-hunt-server-eight-flax.vercel.app/products`) // ✅ Replace this with your actual API
       .then((res) => res.json())
       .then((data) => {
         // Sort products: Pending status first
@@ -23,7 +23,7 @@ const ProductReviewQueue = () => {
   // ✅ Handle Make Featured
   const handleMakeFeatured = (productId) => {
     // API call to mark as featured
-    fetch(`https://product-hunt-server-tawny.vercel.appproducts/featured/${productId}`, {
+    fetch(`https://product-hunt-server-eight-flax.vercel.app/products/featured/${productId}`, {
       method: "PATCH",
     })
       .then((res) => res.json())
@@ -34,7 +34,7 @@ const ProductReviewQueue = () => {
 
   // ✅ Handle Accept Product
   const handleAccept = (productId) => {
-    fetch(`https://product-hunt-server-tawny.vercel.appproducts/accept/${productId}`, {
+    fetch(`https://product-hunt-server-eight-flax.vercel.app/products/accept/${productId}`, {
       method: "PATCH",
     })
       .then((res) => res.json())
@@ -52,7 +52,7 @@ const ProductReviewQueue = () => {
 
   // ✅ Handle Reject Product
   const handleReject = (productId) => {
-    fetch(`https://product-hunt-server-tawny.vercel.appproducts/reject/${productId}`, {
+    fetch(`https://product-hunt-server-eight-flax.vercel.app/products/reject/${productId}`, {
       method: "PATCH",
     })
       .then((res) => res.json())

@@ -21,7 +21,7 @@ const ProductCard = ({ product, currentUser }) => {
   const voteMutation = useMutation(
     async ({ id, type }) => {
       const response = await axios.patch(
-        `https://product-hunt-server-tawny.vercel.appproducts/${id}/vote`,
+        `https://product-hunt-server-eight-flax.vercel.app/products/${id}/vote`,
         {
           type,
           userEmail: currentUser?.email, // Dynamic user email
@@ -43,7 +43,7 @@ const ProductCard = ({ product, currentUser }) => {
   const bookmarkMutation = useMutation(
     async (id) => {
       const response = await axios.post(
-        `https://product-hunt-server-tawny.vercel.appproducts/${id}/bookmark`,
+        `https://product-hunt-server-eight-flax.vercel.app/products/${id}/bookmark`,
         {
           userEmail: currentUser?.email,
         }

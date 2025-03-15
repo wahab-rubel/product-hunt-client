@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'https://product-hunt-server-tawny.vercel.app', 
+  baseURL: 'https://product-hunt-server-n68wm3en9-wahab-rubels-projects.vercel.app/', 
   withCredentials: true, 
 });
 

@@ -8,7 +8,7 @@ const CouponSlider = () => {
 
   // Fetch coupons from backend
   useEffect(() => {
-    fetch("https://product-hunt-server-tawny.vercel.appproducts/coupons")
+    fetch(`https://product-hunt-server-eight-flax.vercel.app/products/coupons`)
       .then((res) => res.json())
       .then((data) => {
         console.log("Coupons:", data.coupons);
