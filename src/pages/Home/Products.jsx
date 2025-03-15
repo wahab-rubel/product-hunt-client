@@ -8,11 +8,9 @@ const Products = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // ✅ Extract search query from URL
   const searchParams = new URLSearchParams(location.search);
   const urlSearchQuery = searchParams.get("search")?.toLowerCase() || "";
 
-  // ✅ State Variables
   const [products, setProducts] = useState([]);
   const [query, setQuery] = useState(urlSearchQuery);
   const [search, setSearch] = useState(urlSearchQuery);
@@ -21,19 +19,15 @@ const Products = () => {
   );
   const [totalPages, setTotalPages] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(0); // for slider
+  const [currentIndex, setCurrentIndex] = useState(0);
   const productsPerPage = 6;
 
-  // ✅ Fetch products when search or pagination changes
+  // ✅ Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const url = `https://product-hunt-server-tawny.vercel.app/products?search=${search}&page=${currentPage}&limit=${productsPerPage}`;
-        console.log("Fetching URL:", url);
-
         const response = await axios.get(url);
-        console.log("Fetched Products:", response.data);
-
         setProducts(response.data.products || []);
         setTotalPages(response.data.totalPages || 1);
       } catch (error) {
@@ -42,10 +36,12 @@ const Products = () => {
     };
 
     fetchProducts();
-    navigate(`/products?search=${search}&page=${currentPage}`, { replace: true });
+    navigate(`/products?search=${search}&page=${currentPage}`, {
+      replace: true,
+    });
   }, [search, currentPage, navigate]);
 
-  // ✅ Handle search submission
+  // ✅ Search submission
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     const trimmedQuery = query.trim().toLowerCase();
@@ -55,26 +51,17 @@ const Products = () => {
     }
   };
 
-  // ✅ Pagination Controls
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
-  };
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
-  };
+  // ✅ Pagination controls
+  const handlePrevPage = () =>
+    currentPage > 1 && setCurrentPage((prev) => prev - 1);
+  const handleNextPage = () =>
+    currentPage < totalPages && setCurrentPage((prev) => prev + 1);
 
-  // ✅ Slider Controls
-  const handlePrevSlide = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? products.length - 1 : prevIndex - 1
-    );
-  };
-
-  const handleNextSlide = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === products.length - 1 ? 0 : prevIndex + 1
-    );
-  };
+  // ✅ Slider controls
+  const handlePrevSlide = () =>
+    setCurrentIndex((prev) => (prev === 0 ? products.length - 1 : prev - 1));
+  const handleNextSlide = () =>
+    setCurrentIndex((prev) => (prev === products.length - 1 ? 0 : prev + 1));
 
   return (
     <>
@@ -101,7 +88,7 @@ const Products = () => {
           </button>
         </form>
 
-        {/* ✅ Product Slider Section */}
+        {/* ✅ Product Slider */}
         {products.length > 0 && (
           <div className="relative w-full max-w-4xl mx-auto overflow-hidden mb-10">
             <div
@@ -113,7 +100,7 @@ const Products = () => {
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-64 object-cover rounded-lg mb-4"
+                    className="w-full h-56 md:h-64 object-cover rounded-lg mb-4"
                   />
                   <h3 className="font-bold text-lg">{product.name}</h3>
                   <p className="text-gray-700">Price: ${product.price}</p>
@@ -122,16 +109,16 @@ const Products = () => {
               ))}
             </div>
 
-            {/* Prev & Next Buttons */}
+            {/* ✅ Prev/Next Slider */}
             <button
               onClick={handlePrevSlide}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full"
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
             >
               <FaArrowLeft />
             </button>
             <button
               onClick={handleNextSlide}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
             >
               <FaArrowRight />
             </button>
@@ -139,7 +126,7 @@ const Products = () => {
         )}
 
         {/* ✅ Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.length > 0 ? (
             products.map((product) => (
               <div
@@ -202,8 +189,8 @@ const Products = () => {
 
         {/* ✅ Modal for Product Details */}
         {selectedProduct && (
-          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg w-11/12 max-w-md relative shadow-xl">
+          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+            <div className="bg-white p-6 rounded-lg w-full max-w-md relative shadow-xl">
               <button
                 onClick={() => setSelectedProduct(null)}
                 className="absolute top-2 right-2 text-red-500 text-2xl"
@@ -215,7 +202,9 @@ const Products = () => {
                 alt={selectedProduct.name}
                 className="w-full h-52 object-cover mb-4 rounded"
               />
-              <h2 className="text-2xl font-bold mb-2">{selectedProduct.name}</h2>
+              <h2 className="text-2xl font-bold mb-2">
+                {selectedProduct.name}
+              </h2>
               <p className="text-lg mb-1">Price: ${selectedProduct.price}</p>
               <p className="text-md text-gray-600 mb-2">
                 Category: {selectedProduct.category}

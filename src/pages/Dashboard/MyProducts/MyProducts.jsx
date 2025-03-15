@@ -4,23 +4,22 @@ import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
 
 const MyProducts = () => {
-  const { user } = useAuth(); // Get current logged-in user
+  const { user } = useAuth();
   const [products, setProducts] = useState([]);
 
-  // ✅ Fetch user's products when page loads
+  // ✅ Fetch user's products
   useEffect(() => {
     if (user?.email) {
-      fetch(`https://product-hunt-server-tawny.vercel.app/products?userEmail=${user.email}`)
+      fetch(
+        `https://product-hunt-server-tawny.vercel.app/products?userEmail=${user.email}`
+      )
         .then((res) => res.json())
-        .then((data) => {
-          console.log("Fetched Products:", data); // Check API data
-          setProducts(data.products); // ✅ Set only the products array
-        })
+        .then((data) => setProducts(data.products || []))
         .catch((err) => console.error("Failed to load products", err));
     }
   }, [user]);
 
-  // ✅ Handle Delete Product
+  // ✅ Handle Delete
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       fetch(`https://product-hunt-server-tawny.vercel.app/products/${id}`, {
@@ -30,41 +29,32 @@ const MyProducts = () => {
         .then((data) => {
           if (data.deletedCount > 0) {
             toast.success("Product deleted successfully!");
-            // Update product list after delete
-            setProducts((prevProducts) =>
-              prevProducts.filter((product) => product._id !== id)
-            );
+            setProducts((prev) => prev.filter((product) => product._id !== id));
           }
         })
         .catch((err) => console.error("Delete failed", err));
     }
   };
 
+  // ✅ Handle Approve
   const handleApprove = (id) => {
-    fetch(`https://product-hunt-server-tawny.vercel.app/products/approve/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "Accepted" }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to approve product");
-        }
-        return res.json();
-      })
+    fetch(
+      `https://product-hunt-server-tawny.vercel.app/products/approve/${id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Accepted" }),
+      }
+    )
+      .then((res) => res.json())
       .then((data) => {
         if (data.modifiedCount > 0) {
           toast.success("Product approved successfully!");
-          // Update local state
-          setProducts((prevProducts) =>
-            prevProducts.map((product) =>
-              product._id === id ? { ...product, status: "Accepted" } : product
-            )
+          setProducts((prev) =>
+            prev.map((p) => (p._id === id ? { ...p, status: "Accepted" } : p))
           );
         } else {
-          toast.error("Approval failed. Please try again.");
+          toast.error("Approval failed. Try again.");
         }
       })
       .catch((err) => {
@@ -74,30 +64,34 @@ const MyProducts = () => {
   };
 
   return (
-    <div className="container mx-auto p-5">
-      <h2 className="text-2xl font-bold mb-5">My Products</h2>
+    <div className="max-w-7xl mx-auto p-4">
+      <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
+        My Products
+      </h2>
 
       {products.length === 0 ? (
         <p className="text-center text-gray-500">No products found.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-300 rounded-lg">
-            <thead className="bg-gray-100">
+        <div className="overflow-x-auto rounded-lg shadow-lg">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
               <tr>
-                <th className="py-3 px-6 border-b">Product Name</th>
-                <th className="py-3 px-6 border-b">Votes</th>
-                <th className="py-3 px-6 border-b">Status</th>
-                <th className="py-3 px-6 border-b">Actions</th>
+                <th className="py-3 px-4 text-left">Product Name</th>
+                <th className="py-3 px-4 text-center">Votes</th>
+                <th className="py-3 px-4 text-center">Status</th>
+                <th className="py-3 px-4 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-white divide-y divide-gray-200">
               {products.map((product) => (
-                <tr key={product._id} className="text-center">
-                  <td className="py-3 px-6 border-b">{product.name}</td>
-                  <td className="py-3 px-6 border-b">{product.votes || 0}</td>
-                  <td className="py-3 px-6 border-b">
+                <tr key={product._id} className="hover:bg-gray-50">
+                  <td className="py-3 px-4">{product.name}</td>
+                  <td className="py-3 px-4 text-center">
+                    {product.votes || 0}
+                  </td>
+                  <td className="py-3 px-4 text-center">
                     <span
-                      className={`px-3 py-1 rounded-full text-white ${
+                      className={`px-3 py-1 rounded-full text-white text-xs font-semibold ${
                         product.status === "Accepted"
                           ? "bg-green-500"
                           : product.status === "Rejected"
@@ -108,29 +102,29 @@ const MyProducts = () => {
                       {product.status || "Pending"}
                     </span>
                   </td>
-                  <td className="py-3 px-6 border-b space-x-2">
-                    {/* ✅ Update Button */}
+                  <td className="py-3 px-4 text-center space-y-2 md:space-y-0 md:space-x-2 flex flex-col md:flex-row justify-center items-center">
+                    {/* Update Button */}
                     <Link
                       to={`/dashboard/updateproduct/${product._id}`}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                      className="bg-yellow-500 hover:bg-yellow-600 transition text-white text-xs px-3 py-1 rounded shadow"
                     >
                       Update
                     </Link>
 
-                    {/* ✅ Approve Button (only show if not Accepted) */}
+                    {/* Approve Button */}
                     {product.status !== "Accepted" && (
                       <button
                         onClick={() => handleApprove(product._id)}
-                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+                        className="bg-green-500 hover:bg-green-600 transition text-white text-xs px-3 py-1 rounded shadow"
                       >
                         Approve
                       </button>
                     )}
 
-                    {/* ✅ Delete Button */}
+                    {/* Delete Button */}
                     <button
                       onClick={() => handleDelete(product._id)}
-                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                      className="bg-red-500 hover:bg-red-600 transition text-white text-xs px-3 py-1 rounded shadow"
                     >
                       Delete
                     </button>

@@ -11,59 +11,106 @@ import {
   FaCartPlus,
   FaListAlt,
   FaCheckCircle,
+  FaBars,
+  FaTimes,
+  FaBell,
 } from "react-icons/fa";
 import { Link, NavLink, Outlet } from "react-router-dom";
+import { useState } from "react";
 import useCart from "../hooks/useCart";
 import useAdmin from "../hooks/useAdmin";
 import Footer from "../components/Footer";
+import useAuth from "../hooks/useAuth"; // Assuming you have a custom hook to get user data
 
 const Dashboard = () => {
   const [cart] = useCart();
   const [isAdmin, isAdminLoading] = useAdmin();
+  const [isSidebarOpen, setSidebarOpen] = useState(false); // Sidebar toggle for mobile
+  const { user } = useAuth(); // Get logged-in user data
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
       {/* Navbar */}
-      <header className="bg-white/30 backdrop-blur-lg shadow-md border-b border-gray-200 p-6 sticky top-0 z-50">
+      <header className="bg-white/50 backdrop-blur-md shadow-xl border-b border-gray-300 p-4 sticky top-0 z-50 rounded-b-xl mx-4 mt-4">
         <nav className="flex justify-between items-center">
+          {/* Logo */}
           <Link
             to="/"
-            className="text-3xl font-extrabold text-purple-700 tracking-widest"
+            className="text-3xl font-extrabold text-purple-700 tracking-wider"
           >
             Product<span className="text-yellow-500">Hunt</span>
           </Link>
-          <div className="space-x-6 text-lg">
-            <NavLink
-              to="/"
-              className="hover:text-yellow-500 transition text-xl font-extrabold text-cyan-500"
-            >
+
+          {/* Menu for Desktop */}
+          <div className="hidden md:flex space-x-8 items-center text-lg font-semibold">
+            <NavLink to="/" className="navlink">
               Home
             </NavLink>
-            <NavLink
-              to="/products"
-              className="hover:text-yellow-500 transition text-xl font-extrabold text-cyan-500"
-            >
+            <NavLink to="/products" className="navlink">
               Products
             </NavLink>
-            <NavLink
-              to="/contact"
-              className="hover:text-yellow-500 transition text-xl font-extrabold text-cyan-500"
-            >
+            <NavLink to="/contact" className="navlink">
               Contact
             </NavLink>
+            <FaBell className="text-2xl hover:text-yellow-500" />
+            <FaCartPlus className="text-2xl hover:text-yellow-500" />
+            {user?.photoURL ? (
+              <img
+                src={user.photoURL}
+                alt="User"
+                className="w-10 h-10 rounded-full border-2 border-purple-500"
+              />
+            ) : (
+              <FaUser className="text-3xl text-purple-700" />
+            )}
           </div>
+
+          {/* Hamburger Icon for Mobile */}
+          <button
+            onClick={() => setSidebarOpen(!isSidebarOpen)}
+            className="md:hidden text-3xl text-purple-700"
+          >
+            {isSidebarOpen ? <FaTimes /> : <FaBars />}
+          </button>
         </nav>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-72 bg-gradient-to-b from-purple-800 to-purple-600 text-white p-6 shadow-xl backdrop-blur-lg rounded-tr-3xl rounded-br-3xl flex flex-col gap-4 overflow-y-auto custom-scrollbar">
+        <aside
+          className={`fixed md:static top-0 left-0 h-full w-72 bg-gradient-to-b from-purple-900 to-purple-700 text-white p-6 shadow-2xl z-40 backdrop-blur-2xl rounded-tr-3xl rounded-br-3xl transform transition-transform duration-300 ease-in-out flex flex-col gap-4 overflow-y-auto custom-scrollbar
+          ${
+            isSidebarOpen
+              ? "translate-x-0"
+              : "-translate-x-full md:translate-x-0"
+          }`}
+        >
+          <div className="flex items-center space-x-3 mb-6">
+            {user?.photoURL ? (
+              <img
+                src={user.photoURL}
+                alt="User"
+                className="w-12 h-12 rounded-full border-2 border-yellow-400"
+              />
+            ) : (
+              <FaUser className="w-12 h-12 rounded-full border-2 border-yellow-400 p-2 bg-white text-purple-700" />
+            )}
+            <div>
+              <h3 className="font-bold">
+                Hello, {user?.displayName || (isAdmin ? "Admin" : "User")}
+              </h3>
+              <p className="text-sm opacity-70">
+                {isAdmin ? "Admin Panel" : "User Dashboard"}
+              </p>
+            </div>
+          </div>
+
           {isAdminLoading ? (
             <div className="text-center mt-10 text-lg font-semibold">
-              Loading Menu...
+              Loading...
             </div>
           ) : (
-            <ul className="space-y-4 text-lg">
+            <ul className="space-y-3">
               {isAdmin ? (
                 <>
                   <SidebarItem
@@ -121,16 +168,18 @@ const Dashboard = () => {
                   />
                 </>
               )}
-
-              {/* Divider */}
-              <div className="border-t border-gray-400 my-4"></div>
-
-              {/* Common Links for All */}
+              <div className="border-t border-gray-400 my-3"></div>
               <SidebarItem to="/" icon={<FaHome />} label="Home" />
-              <SidebarItem to="/products" icon={<FaSearch />} label="Products" />
-              <SidebarItem to="/contact" icon={<FaEnvelope />} label="Contact" />
-
-              {/* ✅ Product Review Queue for Both Admin & User */}
+              <SidebarItem
+                to="/products"
+                icon={<FaSearch />}
+                label="Products"
+              />
+              <SidebarItem
+                to="/contact"
+                icon={<FaEnvelope />}
+                label="Contact"
+              />
               <SidebarItem
                 to="/dashboard/product-review"
                 icon={<FaCheckCircle />}
@@ -141,8 +190,8 @@ const Dashboard = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8 overflow-y-auto">
-          <div className="bg-white shadow-lg rounded-xl p-8 min-h-[80vh]">
+        <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+          <div className="bg-white shadow-2xl rounded-3xl p-6 md:p-10 min-h-[80vh]">
             <Outlet />
           </div>
         </main>
@@ -154,19 +203,18 @@ const Dashboard = () => {
   );
 };
 
-// ✅ Reusable Sidebar Item Component
 const SidebarItem = ({ to, icon, label }) => (
   <NavLink
     to={to}
     className={({ isActive }) =>
-      `flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${
+      `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
         isActive
-          ? "bg-yellow-300 text-black shadow-md"
-          : "hover:bg-white/20 hover:shadow hover:translate-x-1"
+          ? "bg-yellow-400/90 text-black shadow-lg"
+          : "hover:bg-white/10 hover:translate-x-1"
       }`
     }
   >
-    <span className="text-2xl">{icon}</span>
+    <span className="text-xl">{icon}</span>
     <span className="font-medium">{label}</span>
   </NavLink>
 );

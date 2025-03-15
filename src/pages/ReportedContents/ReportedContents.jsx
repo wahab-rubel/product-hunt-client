@@ -7,14 +7,14 @@ const ReportedContents = () => {
 
   // ✅ Fetch reported products
   useEffect(() => {
-    fetch(`https://product-hunt-server-tawny.vercel.app/products`) 
+    fetch(`https://product-hunt-server-tawny.vercel.app/reported-products`) 
       .then((res) => res.json())
       .then((data) => setReportedProducts(data))
       .catch((error) =>
         console.error("Error fetching reported products:", error)
       );
   }, []);
-
+  
   // ✅ Handle Delete Product
   const handleDelete = (productId) => {
     const confirmDelete = window.confirm(
@@ -22,9 +22,12 @@ const ReportedContents = () => {
     );
     if (!confirmDelete) return;
 
-    fetch(`https://product-hunt-server-tawny.vercel.app/products/${productId}`, {
-      method: "DELETE",
-    })
+    fetch(
+      `https://product-hunt-server-tawny.vercel.app/products/${productId}`,
+      {
+        method: "DELETE",
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         if (result.success) {
@@ -45,12 +48,14 @@ const ReportedContents = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Reported Contents</h2>
+      <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">
+        Reported Contents
+      </h2>
 
-      <div className="overflow-x-auto">
-        <table className="table w-full border">
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <table className="table w-full min-w-max">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="bg-gray-100 text-gray-700 text-sm md:text-base">
               <th>#</th>
               <th>Product Name</th>
               <th>Actions</th>
@@ -66,22 +71,22 @@ const ReportedContents = () => {
             )}
 
             {reportedProducts.map((product, index) => (
-              <tr key={product.id} className="hover:bg-gray-50">
-                <td>{index + 1}</td>
-                <td>{product.name}</td>
-                <td className="space-x-2">
-                  {/* View Details Button */}
+              <tr
+                key={product.id}
+                className="hover:bg-gray-50 text-sm md:text-base"
+              >
+                <td className="text-center">{index + 1}</td>
+                <td className="text-center">{product.name}</td>
+                <td className="space-x-2 text-center">
                   <Link
                     to={`/product-details/${product.id}`}
-                    className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white"
+                    className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                   >
-                    View Details
+                    View
                   </Link>
-
-                  {/* Delete Button */}
                   <button
                     onClick={() => handleDelete(product.id)}
-                    className="btn btn-sm bg-red-500 hover:bg-red-600 text-white"
+                    className="btn btn-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
                   >
                     Delete
                   </button>
