@@ -14,19 +14,20 @@ import {
   FaBars,
   FaTimes,
   FaBell,
+  FaHistory,
 } from "react-icons/fa";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { useState } from "react";
 import useCart from "../hooks/useCart";
 import useAdmin from "../hooks/useAdmin";
 import Footer from "../components/Footer";
-import useAuth from "../hooks/useAuth"; // Assuming you have a custom hook to get user data
+import useAuth from "../hooks/useAuth";
 
 const Dashboard = () => {
   const [cart] = useCart();
   const [isAdmin, isAdminLoading] = useAdmin();
-  const [isSidebarOpen, setSidebarOpen] = useState(false); // Sidebar toggle for mobile
-  const { user } = useAuth(); // Get logged-in user data
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
@@ -38,7 +39,7 @@ const Dashboard = () => {
             to="/"
             className="text-3xl font-extrabold text-purple-700 tracking-wider"
           >
-            Product<span className="text-yellow-500">Hunt</span>
+            Product <span className="text-yellow-500">Hunt</span>
           </Link>
 
           {/* Menu for Desktop */}
@@ -114,7 +115,7 @@ const Dashboard = () => {
               {isAdmin ? (
                 <>
                   <SidebarItem
-                    to="/dashboard/adminHome"
+                    to="/dashboard/admin-home"
                     icon={<FaHome />}
                     label="Admin Home"
                   />
@@ -143,11 +144,17 @@ const Dashboard = () => {
                     icon={<FaAd />}
                     label="Manage Coupons"
                   />
+                  {/* NEW Activity Log Link */}
+                  <SidebarItem
+                    to="/dashboard/admin/activity-log"
+                    icon={<FaHistory />}
+                    label="Activity Log"
+                  />
                 </>
               ) : (
                 <>
                   <SidebarItem
-                    to="/dashboard/userHome"
+                    to="/dashboard/user-home"
                     icon={<FaHome />}
                     label="User Home"
                   />
@@ -173,7 +180,7 @@ const Dashboard = () => {
               <SidebarItem
                 to="/products"
                 icon={<FaSearch />}
-                label="Products"
+                label="Search Option"
               />
               <SidebarItem
                 to="/contact"
@@ -181,7 +188,7 @@ const Dashboard = () => {
                 label="Contact"
               />
               <SidebarItem
-                to="/dashboard/product-review"
+                to="/dashboard/productreviewqueue"
                 icon={<FaCheckCircle />}
                 label="Product Review Queue"
               />
@@ -192,7 +199,7 @@ const Dashboard = () => {
         {/* Main Content */}
         <main className="flex-1 p-4 md:p-8 overflow-y-auto">
           <div className="bg-white shadow-2xl rounded-3xl p-6 md:p-10 min-h-[80vh]">
-            <Outlet />
+            <Outlet /> {/* ✅ This is where child routes will render */}
           </div>
         </main>
       </div>

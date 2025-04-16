@@ -12,98 +12,81 @@ import axios from "axios";
 const ProductCard = ({ product, currentUser }) => {
   const queryClient = useQueryClient();
 
-  // Local state for bookmark (optional to control instantly)
+  if (!product) return null;
+
   const [bookmarked, setBookmarked] = useState(
     product?.bookmarkedBy?.includes(currentUser?.email) || false
   );
 
-  // ---------------------- 🧡 Vote Mutation ---------------------- //
-  const voteMutation = useMutation(
-    async ({ id, type }) => {
-      const response = await axios.patch(
-        `https://product-hunt-server-eight-flax.vercel.app/products/${id}/vote`,
-        {
-          type,
-          userEmail: currentUser?.email, // Dynamic user email
-        }
+  // Vote mutation
+  const voteMutation = useMutation({
+    mutationFn: async ({ id, type }) => {
+      const res = await axios.patch(
+        `http://localhost:5000/products/${id}/vote`,
+        { type, userEmail: currentUser?.email }
       );
-      return response.data;
+      return res.data;
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["products"]); // Refresh product list
-      },
-      onError: (error) => {
-        console.error("Vote error:", error);
-      },
-    }
-  );
+    onSuccess: () => queryClient.invalidateQueries(["products"]),
+  });
 
-  // ---------------------- 💛 Bookmark Mutation ---------------------- //
-  const bookmarkMutation = useMutation(
-    async (id) => {
-      const response = await axios.post(
-        `https://product-hunt-server-eight-flax.vercel.app/products/${id}/bookmark`,
-        {
-          userEmail: currentUser?.email,
-        }
+  // Bookmark mutation
+  const bookmarkMutation = useMutation({
+    mutationFn: async (id) => {
+      const res = await axios.post(
+        `http://localhost:5000/products/${id}/bookmark`,
+        { userEmail: currentUser?.email }
       );
-      return response.data;
+      return res.data;
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["products"]); // Refresh product list
-        setBookmarked(!bookmarked); // Toggle bookmark state
-      },
-      onError: (error) => {
-        console.error("Bookmark error:", error);
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries(["products"]);
+      setBookmarked((prev) => !prev);
+    },
+  });
 
-  // ---------------------- 🛑 Handle Unauthorized Access ---------------------- //
   const handleVote = (type) => {
-    if (!currentUser) {
-      window.location.href = "/login"; // Redirect to login if not logged in
-      return;
-    }
+    if (!currentUser) return (window.location.href = "/login");
     voteMutation.mutate({ id: product._id, type });
   };
 
   const handleBookmark = () => {
-    if (!currentUser) {
-      window.location.href = "/login";
-      return;
-    }
+    if (!currentUser) return (window.location.href = "/login");
     bookmarkMutation.mutate(product._id);
   };
 
-  // ---------------------- ✅ Render ---------------------- //
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className="bg-white p-4 rounded-xl shadow-lg relative transition-all"
+      className="bg-white p-4 rounded-xl shadow-lg transition-all"
     >
       <img
-        src={`data:image/png;base64,${product.productImage}`} // Assuming base64 image
+        src={
+          product.productImage?.startsWith("data:image")
+            ? product.productImage
+            : `data:image/png;base64,${product.productImage}`
+        }
         alt={product.productName}
         className="w-full h-40 object-cover rounded-md"
+        onClick={() => (window.location.href = `/product/${product._id}`)}
       />
+
       <h3
         className="text-lg font-bold mt-2 cursor-pointer hover:underline"
-        onClick={() => (window.location.href = `/product/${product._id}`)} // Redirect to details
+        onClick={() => (window.location.href = `/product/${product._id}`)}
       >
         {product.productName}
       </h3>
+
       <p className="text-gray-600 text-sm mt-1">
-        {product.description?.slice(0, 100)}...
+        {product.description?.slice(0, 100) + "..."}
       </p>
+
       <p className="text-gray-500 text-xs mt-1">
-        Tags: {product.tags?.join(", ")}
+        Tags: {Array.isArray(product.tags) ? product.tags.join(", ") : "None"}
       </p>
+
       <div className="flex items-center justify-between mt-4">
-        {/* Upvote Button */}
         <button
           onClick={() => handleVote("up")}
           className="flex items-center gap-1 text-green-600 hover:text-green-800"
@@ -111,7 +94,6 @@ const ProductCard = ({ product, currentUser }) => {
           <FaThumbsUp /> {product.votes?.up || 0}
         </button>
 
-        {/* Downvote Button */}
         <button
           onClick={() => handleVote("down")}
           className="flex items-center gap-1 text-red-600 hover:text-red-800"
@@ -119,7 +101,6 @@ const ProductCard = ({ product, currentUser }) => {
           <FaThumbsDown /> {product.votes?.down || 0}
         </button>
 
-        {/* Bookmark Button */}
         <button
           onClick={handleBookmark}
           className="text-yellow-500 hover:text-yellow-600"

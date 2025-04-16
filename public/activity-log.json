@@ -1,0 +1,11 @@
+[
+ { "id": 1, "user": "user123", "activity": "Browsed 'AI Powered Toaster'", "timestamp": "2025-04-15 10:00 AM" },
+ { "id": 2, "user": "moderator45", "activity": "Approved 'Smart Coffee Maker'", "timestamp": "2025-04-15 10:05 AM" },
+ { "id": 3, "user": "user789", "activity": "Upvoted 'VR Headset Pro'", "timestamp": "2025-04-15 10:10 AM" },
+ { "id": 4, "user": "admin1", "activity": "Updated role of user123 to moderator", "timestamp": "2025-04-15 10:15 AM" },
+ { "id": 5, "user": "user234", "activity": "Reported 'Smart Watch Ultra'", "timestamp": "2025-04-15 10:20 AM" },
+ { "id": 6, "user": "moderator45", "activity": "Rejected reported item 'Buggy Smart Bulb'", "timestamp": "2025-04-15 10:25 AM" },
+ { "id": 7, "user": "admin1", "activity": "Viewed site activity statistics", "timestamp": "2025-04-15 10:30 AM" },
+ { "id": 8, "user": "moderator67", "activity": "Marked 'Folding E-Bike' as featured", "timestamp": "2025-04-15 10:35 AM" },
+ { "id": 9, "user": "user567", "activity": "Submitted 'Self-driving Drone' for review", "timestamp": "2025-04-15 10:40 AM" }
+]

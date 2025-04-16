@@ -65,7 +65,7 @@ const Navbar = () => {
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all ${
         scrolled
-          ? "backdrop-blur-lg bg-purple-800/80 shadow-md"
+          ? "backdrop-blur-lg bg-emerald-700/80 shadow-md"
           : "bg-transparent"
       }`}
     >
@@ -77,16 +77,19 @@ const Navbar = () => {
 
         {/* Desktop Links */}
         <div className="hidden lg:flex items-center space-x-6 font-extrabold">
-          <NavLink to="/" className="text-white hover:text-orange-400">
+          <NavLink to="/" className="hover:text-orange-400">
             Home
           </NavLink>
-          <NavLink to="/products" className="text-white hover:text-orange-400">
+          <NavLink to="/products" className="hover:text-orange-400">
             Products
+          </NavLink>
+          <NavLink to="productsform" className="hover:text-orange-400">
+            Products Form
           </NavLink>
           {user && (
             <NavLink
               to="/dashboard"
-              className="text-white hover:text-orange-400"
+              className="hover:text-orange-400"
             >
               Dashboard
             </NavLink>
@@ -94,7 +97,7 @@ const Navbar = () => {
           {isAdmin && !isAdminLoading && (
             <NavLink
               to="/admin/manage-users"
-              className="text-white hover:text-orange-400"
+              className="hover:text-orange-400"
             >
               Admin Panel
             </NavLink>
@@ -111,7 +114,7 @@ const Navbar = () => {
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-white/30 placeholder-gray-200 pl-10 pr-4 py-2 rounded-full text-white focus:outline-none focus:ring focus:ring-orange-400"
+            className="bg-red-700/30 placeholder-gray-200 pl-10 pr-4 py-2 rounded-full text-white focus:outline-none focus:ring focus:ring-orange-400"
           />
           <FaSearch className="absolute left-3 top-3 text-white opacity-70" />
         </form>
@@ -182,7 +185,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white/90 backdrop-blur-lg text-black py-4">
+        <div className="lg:hidden bg-cyan-800/90 backdrop-blur-lg text-black py-4">
           <div className="flex flex-col space-y-4 px-6">
             <NavLink
               to="/"

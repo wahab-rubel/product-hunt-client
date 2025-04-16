@@ -1,44 +1,82 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const ProductReviewQueue = ({ productsData }) => {
+const ProductReviewQueue = () => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Sort products: Pending first, then others
   useEffect(() => {
-    const sortedProducts = [...productsData].sort((a, b) => {
-      const statusOrder = { Pending: 1, Accepted: 2, Rejected: 3 };
-      return statusOrder[a.status] - statusOrder[b.status];
-    });
-    setProducts(sortedProducts);
-  }, [productsData]);
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch("https://your-api-url.com/products"); // Replace with your actual API endpoint
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+        const sortedProducts = [...data].sort((a, b) => {
+          const statusOrder = { Pending: 1, Accepted: 2, Rejected: 3 };
+          return statusOrder[a.status] - statusOrder[b.status];
+        });
+        setProducts(sortedProducts);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Handle Accept Product
-  const handleAccept = (productId) => {
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === productId ? { ...product, status: "Accepted" } : product
-      )
-    );
+    fetchProducts();
+  }, []);
+
+  const handleUpdateStatus = async (productId, status) => {
+    try {
+      const res = await fetch(`https://your-api-url.com/products/${productId}/status`, { // Replace with your actual API endpoint
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const updatedProduct = await res.json();
+      setProducts((prev) =>
+        prev.map((product) =>
+          product.id === productId ? { ...product, status: updatedProduct.status } : product
+        )
+      );
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
-  // Handle Reject Product
-  const handleReject = (productId) => {
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === productId ? { ...product, status: "Rejected" } : product
-      )
-    );
+  const handleMakeFeatured = async (productId) => {
+    try {
+      const res = await fetch(`https://your-api-url.com/products/${productId}/feature`, { // Replace with your actual API endpoint
+        method: "PATCH",
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const updatedProduct = await res.json();
+      setProducts((prev) =>
+        prev.map((product) =>
+          product.id === productId ? { ...product, featured: updatedProduct.featured } : product
+        )
+      );
+      alert("Product marked as featured!");
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
-  // Handle Make Featured
-  const handleMakeFeatured = (productId) => {
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === productId ? { ...product, featured: true } : product
-      )
-    );
-  };
+  if (loading) {
+    return <div className="p-6 max-w-6xl mx-auto">Loading products...</div>;
+  }
+
+  if (error) {
+    return <div className="p-6 max-w-6xl mx-auto text-red-500">Error loading products: {error}</div>;
+  }
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -82,7 +120,7 @@ const ProductReviewQueue = ({ productsData }) => {
                 </td>
                 <td className="p-3">
                   <button
-                    onClick={() => handleAccept(product.id)}
+                    onClick={() => handleUpdateStatus(product.id, "Accepted")}
                     disabled={product.status === "Accepted"}
                     className={`px-3 py-1 rounded ${
                       product.status === "Accepted"
@@ -95,7 +133,7 @@ const ProductReviewQueue = ({ productsData }) => {
                 </td>
                 <td className="p-3">
                   <button
-                    onClick={() => handleReject(product.id)}
+                    onClick={() => handleUpdateStatus(product.id, "Rejected")}
                     disabled={product.status === "Rejected"}
                     className={`px-3 py-1 rounded ${
                       product.status === "Rejected"

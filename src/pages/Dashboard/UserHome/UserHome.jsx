@@ -28,17 +28,19 @@ const UserHome = ({ user, stats = {}, notifications = [] }) => {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         <Link
-          to="/dashboard/myproducts"
+          to="/dashboard/my-products"
           className="flex items-center justify-center gap-2 bg-blue-500 text-white p-4 rounded shadow"
         >
           <FaListAlt /> My Products
         </Link>
+
         <Link
-          to="/dashboard/addproduct"
+          to="/dashboard/add-product"
           className="flex items-center justify-center gap-2 bg-green-500 text-white p-4 rounded shadow"
         >
           <FaCartPlus /> Add New Product
         </Link>
+
         <Link
           to="/dashboard/profile"
           className="flex items-center justify-center gap-2 bg-gray-700 text-white p-4 rounded shadow"
@@ -71,24 +73,5 @@ const UserHome = ({ user, stats = {}, notifications = [] }) => {
     </div>
   );
 };
-
-// Reusable StatCard Component
-const StatCard = ({ title, value, color }) => {
-  return (
-    <div className={`rounded-xl shadow-md text-white p-6 ${color}`}>
-      <p className="text-lg font-medium">{title}</p>
-      <p className="text-3xl font-bold mt-2">
-        {value !== undefined ? value : 0}
-      </p>
-    </div>
-  );
-};
-
-// Example use
-<StatCard
-  title="Total Products"
-  value={10}
-  color="bg-gradient-to-r from-indigo-500 to-purple-500"
-/>;
 
 export default UserHome;

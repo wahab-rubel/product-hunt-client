@@ -1,13 +1,23 @@
 import { useAdmin } from "../hooks/useAdmin";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 const AdminRoute = ({ children }) => {
-  const [isAdmin, isAdminLoading] = useAdmin();
+    const [isAdmin, isAdminLoading] = useAdmin();
+    const location = useLocation();
 
-  if (isAdminLoading) return <p>Loading...</p>;
-  if (!isAdmin) return <Navigate to="/" />; // Redirect if not admin
+    if (isAdminLoading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+            </div>
+        );
+    }
 
-  return children;
+    if (!isAdmin) {
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    return children;
 };
 
 export default AdminRoute;

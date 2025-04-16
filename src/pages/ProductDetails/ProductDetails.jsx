@@ -1,9 +1,10 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
+import { toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
 import useProduct from "../../hooks/useProduct";
-import ReviewForm from "./ReviewForm";
-import ReviewCard from "../../components/ReviewCard";
+import ReviewForm from "../../pages/ReviewForm/ReviewForm";
+import ReviewCard from "../../pages/ReviewCard/ReviewCard";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -11,12 +12,37 @@ const ProductDetails = () => {
   const { product, upvoteProduct, reportProduct } = useProduct(id);
   const [reviews, setReviews] = useState([]);
 
-  
+  // Load Reviews
   useEffect(() => {
-    fetch(`hhttps://product-hunt-server-eight-flax.vercel.app/products/reviews?productId=${id}`)
+    fetch(`https://product-hunt-server-eight-flax.vercel.app/products/reviews?productId=${id}`)
       .then((res) => res.json())
-      .then((data) => setReviews(data));
+      .then((data) => setReviews(data))
+      .catch(() => toast.error("Failed to load reviews."));
   }, [id]);
+
+  // Handle Review Submit
+  const handleReviewSubmit = (text) => {
+    const newReview = {
+      productId: id,
+      text,
+      user: user?.email || "anonymous@example.com",
+      date: new Date(),
+    };
+
+    fetch(`https://product-hunt-server-eight-flax.vercel.app/reviews`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newReview),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        toast.success("Review submitted!");
+        setReviews((prev) => [data, ...prev]); // instantly show the new review
+      })
+      .catch(() => toast.error("Something went wrong while submitting review."));
+  };
 
   if (!product) return <div className="text-center mt-10">Loading...</div>;
 
@@ -64,7 +90,12 @@ const ProductDetails = () => {
       )}
 
       {/* Review Form */}
-      {user && <ReviewForm productId={id} />}
+      {user && (
+        <div className="mt-6">
+          <h4 className="text-xl font-semibold mb-2">Leave a Review</h4>
+          <ReviewForm onSubmit={handleReviewSubmit} />
+        </div>
+      )}
     </div>
   );
 };

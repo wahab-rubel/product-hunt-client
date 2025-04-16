@@ -1,24 +1,42 @@
-import { useQuery } from "@tanstack/react-query";
-import useAxiosSecure from "./useAxiosSecure";
-import useAuth from "./useAuth";
+import { useState, useEffect } from 'react';
+import useAuth from './useAuth'; // ✅ Make sure this path is correct
 
 const useAdmin = () => {
-    const { user, loading } = useAuth(); // Destructuring user and loading from useAuth
-    const axiosSecure = useAxiosSecure(); // Secure Axios instance
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
 
-    // ✅ React Query to check admin status
-    const { data: isAdmin = false, isPending: isAdminLoading } = useQuery({
-        queryKey: ['isAdmin', user?.email], // Unique key for caching and refetching
-        enabled: !!user?.email && !loading, // Only run if user email exists and auth loading is false
-        queryFn: async () => {
-            console.log('Checking admin status for:', user?.email); // Optional console log for debugging
-            const res = await axiosSecure.get(`/users/admin/${user.email}`); // API call to check admin
-            console.log('Admin status response:', res.data); // Optional console log for debugging
-            return res.data?.admin; // Return only boolean value
-        },
-    });
+  useEffect(() => {
+    const fetchAdminStatus = async () => {
+      if (!user?.email) {
+        setIsAdmin(false);
+        setIsLoading(false);
+        return;
+      }
 
-    return [isAdmin, isAdminLoading]; 
+      try {
+        const res = await fetch(
+          `http://localhost:5000/products/users/admin/${user.email}`
+        );
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch admin status');
+        }
+
+        const data = await res.json();
+        setIsAdmin(data?.isAdmin ?? false); // fallback in case it's undefined
+      } catch (error) {
+        console.error("❌ Error fetching admin status:", error);
+        setIsAdmin(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAdminStatus();
+  }, [user]);
+
+  return [isAdmin, isLoading];
 };
 
 export default useAdmin;
