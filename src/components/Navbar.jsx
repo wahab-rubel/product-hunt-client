@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaSearch, FaUserCircle, FaBars, FaTimes } from "react-icons/fa";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useAdmin from "../hooks/useAdmin";
 
@@ -12,6 +12,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const dropdownRef = useRef();
 
   // Handle search submission
@@ -45,7 +46,7 @@ const Navbar = () => {
   const handleGoogleLogin = async () => {
     try {
       await googleSignIn();
-      navigate("/");
+      navigate(location.pathname); // Stay on the current page after login
     } catch (error) {
       console.error("Login Error:", error);
     }
@@ -55,7 +56,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await logOut();
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error("Logout Error:", error);
     }
@@ -71,7 +72,10 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-8 py-3">
         {/* Logo */}
-        <Link to="/" className="text-3xl font-bold text-purple-600 bg-orange-500 p-4 rounded-lg">
+        <Link
+          to="/"
+          className="text-3xl font-bold text-purple-600 bg-orange-500 p-4 rounded-lg"
+        >
           Product <span className="text-red-600 font-extrabold">Hunt</span>
         </Link>
 
@@ -83,22 +87,16 @@ const Navbar = () => {
           <NavLink to="/products" className="hover:text-orange-400">
             Products
           </NavLink>
-          <NavLink to="productsform" className="hover:text-orange-400">
+          <NavLink to="/productsform" className="hover:text-orange-400">
             Products Form
           </NavLink>
           {user && (
-            <NavLink
-              to="/dashboard"
-              className="hover:text-orange-400"
-            >
+            <NavLink to="/dashboard" className="hover:text-orange-400">
               Dashboard
             </NavLink>
           )}
           {isAdmin && !isAdminLoading && (
-            <NavLink
-              to="/admin/manage-users"
-              className="hover:text-orange-400"
-            >
+            <NavLink to="/admin/manage-users" className="hover:text-orange-400">
               Admin Panel
             </NavLink>
           )}
@@ -144,12 +142,12 @@ const Navbar = () => {
                 />
               </button>
             ) : (
-              <button
-                onClick={handleGoogleLogin}
+              <Link
+                to="/login"
                 className="bg-orange-500 px-4 py-2 rounded-full text-white hover:bg-orange-600"
               >
                 Login
-              </button>
+              </Link>
             )}
 
             {dropdownOpen && user && (
@@ -201,6 +199,13 @@ const Navbar = () => {
             >
               Products
             </NavLink>
+            <NavLink
+              to="/productsform"
+              onClick={() => setMobileMenuOpen(false)}
+              className="hover:text-orange-500"
+            >
+              Products Form
+            </NavLink>
             {user && (
               <>
                 <NavLink
@@ -209,13 +214,6 @@ const Navbar = () => {
                   className="hover:text-orange-500"
                 >
                   Dashboard
-                </NavLink>
-                <NavLink
-                  to="/dashboard/mycart"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="hover:text-orange-500"
-                >
-                  My Cart
                 </NavLink>
               </>
             )}
@@ -239,15 +237,13 @@ const Navbar = () => {
                 Logout
               </button>
             ) : (
-              <button
-                onClick={() => {
-                  handleGoogleLogin();
-                  setMobileMenuOpen(false);
-                }}
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
                 className="bg-orange-500 px-4 py-2 rounded text-white hover:bg-orange-600"
               >
                 Login
-              </button>
+              </Link>
             )}
           </div>
         </div>

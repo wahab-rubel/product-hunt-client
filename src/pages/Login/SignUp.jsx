@@ -1,10 +1,11 @@
-import { useContext } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const SignUp = () => {
   const {
@@ -16,8 +17,22 @@ const SignUp = () => {
 
   const { createUser, updateUserProfile } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [captchaValue, setCaptchaValue] = useState(null);
+  const [isCaptchaFilled, setIsCaptchaFilled] = useState(false);
+  const recaptchaRef = useRef(null);
+
+  useEffect(() => {
+    setIsCaptchaFilled(!!captchaValue);
+  }, [captchaValue]);
 
   const onSubmit = async (data) => {
+    if (!captchaValue) {
+      return Swal.fire({
+        icon: "warning",
+        title: "Please verify that you are not a robot.",
+      });
+    }
+
     try {
       // Create user with email and password
       const result = await createUser(data.email, data.password);
@@ -35,6 +50,11 @@ const SignUp = () => {
         console.log("User added to database and token received");
         localStorage.setItem("user-token", res.data.token); // Store token
         reset();
+        setCaptchaValue(null); // Reset captcha
+        setIsCaptchaFilled(false);
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset();
+        }
         Swal.fire({
           position: "top-end",
           icon: "success",
@@ -52,6 +72,11 @@ const SignUp = () => {
       }
     } catch (error) {
       console.error("Signup Error:", error);
+      setCaptchaValue(null); // Reset captcha on error
+      setIsCaptchaFilled(false);
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
       if (error.response?.status === 404) {
         Swal.fire({
           icon: "error",
@@ -75,6 +100,10 @@ const SignUp = () => {
     }
   };
 
+  const handleCaptchaChange = (value) => {
+    setCaptchaValue(value);
+  };
+
   return (
     <>
       <Helmet>
@@ -96,12 +125,12 @@ const SignUp = () => {
                 </label>
                 <input
                   type="text"
-                  {...register("name", { required: true })}
+                  {...register("name", { required: "Name is required" })}
                   placeholder="Name"
                   className="input input-bordered"
                 />
                 {errors.name && (
-                  <span className="text-red-600">Name is required</span>
+                  <span className="text-red-600">{errors.name.message}</span>
                 )}
               </div>
 
@@ -111,12 +140,16 @@ const SignUp = () => {
                 </label>
                 <input
                   type="text"
-                  {...register("photoURL", { required: true })}
+                  {...register("photoURL", {
+                    required: "Photo URL is required",
+                  })}
                   placeholder="Photo URL"
                   className="input input-bordered"
                 />
                 {errors.photoURL && (
-                  <span className="text-red-600">Photo URL is required</span>
+                  <span className="text-red-600">
+                    {errors.photoURL.message}
+                  </span>
                 )}
               </div>
 
@@ -126,12 +159,12 @@ const SignUp = () => {
                 </label>
                 <input
                   type="email"
-                  {...register("email", { required: true })}
+                  {...register("email", { required: "Email is required" })}
                   placeholder="Email"
                   className="input input-bordered"
                 />
                 {errors.email && (
-                  <span className="text-red-600">Email is required</span>
+                  <span className="text-red-600">{errors.email.message}</span>
                 )}
               </div>
 
@@ -142,35 +175,51 @@ const SignUp = () => {
                 <input
                   type="password"
                   {...register("password", {
-                    required: true,
-                    minLength: 6,
-                    maxLength: 20,
-                    pattern: /(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z])/,
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "Password must be at most 20 characters",
+                    },
+                    pattern: {
+                      value: /(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z])/,
+                      message:
+                        "Password must contain uppercase, lowercase, number, and special character.",
+                    },
                   })}
                   placeholder="Password"
                   className="input input-bordered"
                 />
-                {errors.password?.type === "required" && (
-                  <p className="text-red-600">Password is required</p>
+                {errors.password && (
+                  <p className="text-red-600">{errors.password.message}</p>
                 )}
-                {errors.password?.type === "minLength" && (
-                  <p className="text-red-600">
-                    Password must be at least 6 characters
-                  </p>
-                )}
-                {errors.password?.type === "pattern" && (
-                  <p className="text-red-600">
-                    Password must contain uppercase, lowercase, number, and
-                    special character.
-                  </p>
-                )}
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Verify</span>
+                </label>
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                  onChange={handleCaptchaChange}
+                  className="mx-auto"
+                />
               </div>
 
               <div className="form-control mt-6">
                 <input
-                  className="btn btn-primary"
+                  className={`btn ${
+                    isCaptchaFilled
+                      ? "btn-primary"
+                      : "border-t-orange-500 disabled:bg-gray-500"
+                  }`}
                   type="submit"
                   value="Sign Up"
+                  disabled={!isCaptchaFilled}
                 />
               </div>
             </form>
