@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet";
-import axios from "axios"; 
+import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 
 const SignUp = () => {
@@ -14,11 +14,12 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
 
-  const { createUser, updateUserProfile } = useContext(AuthContext); 
+  const { createUser, updateUserProfile } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
+      // Create user with email and password
       const result = await createUser(data.email, data.password);
       const loggedUser = result.user;
       console.log("User Registered:", loggedUser);
@@ -28,10 +29,11 @@ const SignUp = () => {
 
       // Store user data in the database
       const userInfo = { name: data.name, email: data.email };
-      const res = await axios.post("/users", userInfo);
+      const res = await axios.post("http://localhost:5000/signup", userInfo);
 
-      if (res.data.insertedId) {
-        console.log("User added to database");
+      if (res.data.message === "Registered" && res.data.token) {
+        console.log("User added to database and token received");
+        localStorage.setItem("user-token", res.data.token); // Store token
         reset();
         Swal.fire({
           position: "top-end",
@@ -40,23 +42,51 @@ const SignUp = () => {
           showConfirmButton: false,
           timer: 1500,
         });
-        navigate("/");
+        navigate("/"); // Redirect to home after successful registration
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Signup Failed",
+          text: res.data.message || "Something went wrong during registration.",
+        });
       }
     } catch (error) {
       console.error("Signup Error:", error);
+      if (error.response?.status === 404) {
+        Swal.fire({
+          icon: "error",
+          title: "Signup Failed",
+          text: "The signup endpoint could not be found on the server.",
+        });
+      } else if (error.code === "auth/email-already-in-use") {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "This email is already in use. Please log in instead.",
+        });
+        navigate("/login");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Signup Failed",
+          text: error.message || "An unexpected error occurred during signup.",
+        });
+      }
     }
   };
 
   return (
     <>
       <Helmet>
-        <title>Bistro Boss | Sign Up</title>
+        <title>Product Hunt | Sign Up</title>
       </Helmet>
       <div className="hero min-h-screen bg-base-200">
         <div className="hero-content flex-col lg:flex-row-reverse">
           <div className="text-center lg:text-left">
             <h1 className="text-5xl font-bold">Sign up now!</h1>
-            <p className="py-6">Create an account to access all features.</p>
+            <p className="py-6">
+              Create an account to unlock all the features.
+            </p>
           </div>
           <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
             <form onSubmit={handleSubmit(onSubmit)} className="card-body">

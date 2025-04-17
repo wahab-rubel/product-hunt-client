@@ -1,42 +1,48 @@
 import { useState, useEffect } from 'react';
-import useAuth from './useAuth'; // ✅ Make sure this path is correct
+import { useAuth } from '../context/AuthContext';
+
 
 const useAdmin = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuth();
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [isAdminLoading, setIsAdminLoading] = useState(true);
+    const { user, loading } = useAuth(); 
 
-  useEffect(() => {
-    const fetchAdminStatus = async () => {
-      if (!user?.email) {
-        setIsAdmin(false);
-        setIsLoading(false);
-        return;
-      }
+    useEffect(() => {
+        const fetchAdminStatus = async () => {
+            if (loading) {
+                return; // Don't fetch if user data is still loading
+            }
 
-      try {
-        const res = await fetch(
-          `http://localhost:5000/products/users/admin/${user.email}`
-        );
+            if (!user?.email) {
+                setIsAdmin(false);
+                setIsAdminLoading(false);
+                return;
+            }
 
-        if (!res.ok) {
-          throw new Error('Failed to fetch admin status');
-        }
+            try {
+                const res = await fetch(
+                    `http://localhost:5000/users/admin/${user.email}` // ✅ Use the correct backend endpoint for checking admin status
+                );
 
-        const data = await res.json();
-        setIsAdmin(data?.isAdmin ?? false); // fallback in case it's undefined
-      } catch (error) {
-        console.error("❌ Error fetching admin status:", error);
-        setIsAdmin(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+                if (!res.ok) {
+                    console.error("❌ Error fetching admin status:", res.status);
+                    throw new Error('Failed to fetch admin status');
+                }
 
-    fetchAdminStatus();
-  }, [user]);
+                const data = await res.json();
+                setIsAdmin(data?.isAdmin ?? false);
+            } catch (error) {
+                console.error("❌ Error fetching admin status:", error);
+                setIsAdmin(false);
+            } finally {
+                setIsAdminLoading(false);
+            }
+        };
 
-  return [isAdmin, isLoading];
+        fetchAdminStatus();
+    }, [user, loading]); // Depend on loading as well
+
+    return [isAdmin, isAdminLoading];
 };
 
 export default useAdmin;
